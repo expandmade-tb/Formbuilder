@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 1.8.0
+ * Version 1.8.1
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -93,9 +93,12 @@ class Formbuilder {
         Wrapper::factory($wrapper);
     }
     
-    protected function add_field (string $name, string $element) {
+    protected function add_field (string $name, string $element, bool $append=true) {
         if ( substr($name, 0, 1) == '*' || $this->get_field($name) === false )
-            $this->fields[] = new Field($name, $element);
+            if ( $append )
+                $this->fields[] = new Field($name, $element);
+            else
+                array_unshift($this->fields, new Field($name, $element));
         else
             throw new Exception("fields already exists: ".$name);
     }
@@ -830,7 +833,7 @@ class Formbuilder {
      */
     public function message (string $message, $string='') {
         $element = Wrapper::elements('message', 'msg', '', '', $message, $string);
-        $this->add_field('message', $element);
+        $this->add_field('alert_message', $element, false);
         return $this;
     }
     
