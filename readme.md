@@ -10,6 +10,9 @@ This property determines the time, in seconds, between entering form data and su
 ### <span style="color: green;">use_session = false</span>
 A CSRF check will automatially added to the form. If *use_session* is set to true, the csrf-token will be stored in a session, which means a session has to be available. By default a stateless token will be used.
 
+### <span style="color: green;">warnings_on = false</span>
+Some methods are throwing warnings. This value can be set to true when you are testing / debugging.  
+
 # 2. Methods
 
 Input generating methods do have generally the following parameters: *(string $name, string $label='', string $string='', string $value='')*
@@ -17,17 +20,17 @@ Input generating methods do have generally the following parameters: *(string $n
 ### <span style="color: green;">checkbox</span>
 creates an input field of type checkbox
 
-&mdash; <u>example:</u> *$form->checkbox('checkbox_field', 'do you agree');*
+&mdash; <u>example:</u> *$form->checkbox('checkbox_field', ['label'=>i do agree','checked'=>true]);*
 
 ### <span style="color: green;">datalist</span>
 creates an input field of type datalist
 
-&mdash; <u>example:</u> *$form->datalist('datalist_field', 'select a value','list1,list2,list3');*
+&mdash; <u>example:</u> *$form->datalist('datalist_field', 'list1,list2,list3');*
 
 ### <span style="color: green;">date</span>
 creates an input field of type date
 
-&mdash; <u>example:</u> *$form->date('datefield', 'date of birth');*
+&mdash; <u>example:</u> *$form->date('date', ['value'=>date("Y-m-d")]);*
 
 ### <span style="color: green;">datetime</span>
 creates an input field of type datetime-local
@@ -55,12 +58,15 @@ opens a fieldset
 ### <span style="color: green;">file</span>
 creates an input field of type file
 
-&mdash; <u>example:</u> *$form->file('file_field', 'Upload file');*
+&mdash; <u>example:</u> *$form->file('file_field');*
 
 ### <span style="color: green;">html</span>
 adds whatever html to the form
 
 &mdash; <u>example:</u> *$form->html(`'<h2>This is heading 2</h2>'`);*
+
+### <span style="color: green;">lang</span>
+checks if the passed value contains {} and treats the $value as a keyword to lookup in the translation script. If the keyword cannot be found the function will return the passed value, otherwise the translation. If there is nothing to lookup, the function will return the original passed value. Translations are stored in the **i18n** directory.
 
 ### <span style="color: green;">message</span>
 adds an alerting message at the top of the form
@@ -70,7 +76,7 @@ adds an alerting message at the top of the form
 ### <span style="color: green;">password</span>
 creates an input field of type password
 
-&mdash; <u>example:</u> *$form->password('pass_field', 'enter password');*
+&mdash; <u>example:</u> *$form->password('password');*
 
 ### <span style="color: green;">ok</span>
 checks if a form has errors after a validation
@@ -80,7 +86,9 @@ checks if a form has errors after a validation
 ### <span style="color: green;">radio</span>
 creates an input field of type radio button
 
-&mdash;  <u>example:</u> *$form->radio('radio_field','radio_field1','select option 1');*
+&mdash;  <u>example:</u> *$form->radio('radio', 'radio a', ['checked'=>true]);
+
+&mdash;  <u>example:</u> *$form->radio('radio', 'radio b');
 
 ### <span style="color: green;">render</span>
 returns the complete html for the form
@@ -88,7 +96,7 @@ returns the complete html for the form
 &mdash;  <u>example:</u> *echo $form->render();*
 
 ### <span style="color: green;">reset</span>
-reset (unsets) input $_POST, $_GET, $_FILES
+reset (unsets) input $_POST, $_GET, $_FILES and defined form fields and rules
 
 &mdash; <u>example:</u> *$form->reset();*
 
@@ -100,7 +108,7 @@ adds a rule for later validation
 ### <span style="color: green;">select</span>
 creates an input field of type select
 
-&mdash; <u>example:</u> *$form->select('select_field', 'pls choose', 'one,two,three');*
+&mdash; <u>example:</u> *$form->select('select_field', 'one,two,three', ['label'=>'select from');*
 
 ### <span style="color: green;">set_prePOST</span>
 sets the values of the form fields before they are posted. if there are post values, these values will be ignored
@@ -108,7 +116,7 @@ sets the values of the form fields before they are posted. if there are post val
 &mdash; <u>example:</u> *$form->set_prePOST($key_value_array);*
 
 ### <span style="color: green;">set_secrets</span>
-sets the secret key and unique id for stateless csrf token
+sets the secret key and unique id for stateless csrf token. Obviously you should set the secret in every controller if you are using stateless csrf-token.
 
 &mdash; <u>example:</u> *$form->set_secrets('f04ff06c3278ad1a66d43f3d2b17e6c5', '187e6b3e3bd8ecf78f95793cd3a72919');*
 
@@ -135,7 +143,7 @@ creates an input field of type text
 ### <span style="color: green;">textarea</span>
 creates an input textarea
 
-&mdash; <u>example:</u> *$form->textarea('txtarea_field', 'notes here');*
+&mdash; <u>example:</u> *$form->textarea('txtarea_field');*
 
 ### <span style="color: green;">validate</span>
 validates the form with given rules after the form was submitted. the return will either be an **array** with key => value pairs or **false** if csrf-check,honeypot or timer check failed.
@@ -146,9 +154,12 @@ validates the form with given rules after the form was submitted. the return wil
 ### <span style="color: green;">3.1 Rules</span>
 For the form validation callback rules can be defined for each field:
 
-    $form->rule('phone', [$this, 'val_phone'] );
+    $form->rule([$this, 'val_phone', 'phone'] );
+or
 
-where the function does have alway one parameter and need to return a string:
+    $form->text('name')->rule('required');
+
+where the function does have always one parameter and need to return a string:
 
     public function val_phone ($value) : string {
         $pattern = '/^\s*(?:\+?(\d{1,3}))?([-. (]*(\d{3})[-. )]*)?((\d{3})[-. ]*(\d{2,4})(?:[-.x ]*(\d+))?)\s*$/';
@@ -162,22 +173,21 @@ where the function does have alway one parameter and need to return a string:
 
 There are a few already existing "builtin" rules:
 
- 1. $form->rule('field', 'required' );
- 2. $form->rule('field', 'numeric' );
- 3. $form->rule('field', 'integer' );
- 4. $form->rule('field', 'email' );
- 5. $form->rule('field', 'date' );
+ 'required', 'numeric', 'integer', 'email', 'date' );
 
 ### <span style="color: green;">3.2 The method parameter string</span>
 All methods generating input field do have a parameter **string $string=''**. With this parameter you can pass attributes like *readonly, required* etc. These will be added to the attributes already predefined in the wrapper.**But !**, if you use a string like *class="container xyz"*, the original classes will be overwritten and you will have to add them manually.
 
-### <span style="color: green;">3.3 Complete example</span>
-This is a code snipet of a class presenting a simple contact form:
+### <span style="color: green;">3.3 Translatin of labels</span>
+Every label will be checked and a translation will be looked up in the i18n directory when the label is marked as {}:
 
-    public function process($data) {
-        // ... do whatever need to be done
-        return true;
-    }
+        $form = new Formbuilder('contactform', ['lang'=>'es');
+        $form->text('name', ['label'=>'{your name}']);
+
+If a translation can be found, the label would be 'tu nombre' instead of  'your name'. If nothing can be found, the return value would be '{your name}', which means you are missing a translation. If there is no translation file at all, 'en' will be used.
+
+### <span style="color: green;">3.4 Complete example</span>
+This is a code snipet of a class presenting a simple contact form:
 
     public function val_phone ($value) {
         if ( empty($value) )
@@ -194,34 +204,26 @@ This is a code snipet of a class presenting a simple contact form:
 
     public function contactform() {
         $form = new Formbuilder('contactform');
+        $form->text('name')->rule('required');
+        $form->text('email')->rule('email');
+        $form->text('phone');
+        $form->textarea('message', ['label'=>'Leave us a message']);
+        $form->checkbox('agreement', ['label'=>'I agree with your policy terms', 'checked'=>false])->rule('required');
+        $form->submit('submit');
 
         if ( $form->submitted() ) {
-            
-            $form->rule('email', 'email')
-                 ->rule('phone', [$this, 'val_phone']);
-
             $data = $form->validate('name,email,phone,message');
 
             if ( $data === false ) // caused by csrf check, honypot or timer check
-                die('something went wrong');
+                $form->message('something went wrong');
 
             if ( $form->ok() ) {
-                if ( $this->process($data) === true) 
-                    $form->message('thank your for your mail', 'class="alert alert-success" ');
-                else
-                    $form->message('we couldnt send the mail');
-
-                echo $form->render();
-                return;
+                // do something here....
+                $form->reset()->message('thank your for your mail', 'class="alert alert-success" ');
             }
         }
 
-        $form->text('name','your name', 'required')
-             ->text('email','your email', 'required')
-             ->text('phone', 'your phone')
-             ->textarea('message', 'your message')
-             ->checkbox('agreement','I have read and agree to the privacy policy and terms of use', false, 'required')
-             ->submit('submit');
-
-        echo $form->render();
+        $this->data['form'] = $form->render();
+        $this->view('Form');
     }
+    

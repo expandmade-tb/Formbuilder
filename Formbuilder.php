@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.0.0
+ * Version 2.0.1
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -55,6 +55,7 @@ class Formbuilder {
     protected array $i18n = [];
     public int $check_timer = 0;
     public bool $use_session = false;
+    public bool $warnings_on = false;
 
     /**
      * Method __construct
@@ -72,7 +73,7 @@ class Formbuilder {
      *
      * @return void
      */
-    function __construct(string $form_id, array $args) {
+    function __construct(string $form_id, array $args=[]) {
         require(__DIR__.'/Wrapper/Wrapper.php');
         require(__DIR__.'/StatelessCSRF.php');
 
@@ -97,7 +98,10 @@ class Formbuilder {
         if ( $append )
             $this->fields[] = new Field($name, $element);
         else
-            array_unshift($this->fields, new Field($name, $element));
+            if ( empty($this->fields) )
+                $this->fields[] = new Field($name, $element);
+            else
+                array_unshift($this->fields, new Field($name, $element));
     }
 
     protected function get_field (string $name) {
@@ -147,7 +151,6 @@ class Formbuilder {
         }
         
         $element = '<input type="hidden" name="_token" id="csrf-token" value="'.$token.'" />';
-        unset($_POST['_token']);
 
         if ( $this->use_session )
             $_SESSION['csrf-token'] = $token;;     
@@ -797,7 +800,7 @@ class Formbuilder {
         if ( empty($name) ) // if left empty we assume its the last added field (working on method chaining only ! )
             $name = end($this->fields)->name;
         else
-            if ( $this->get_field($name) === false )
+            if ( $this->warnings_on && $this->get_field($name) === false )
                 trigger_error("field $name unknown", E_USER_WARNING );
 
         switch ($rule) {
@@ -837,7 +840,7 @@ class Formbuilder {
     }
     
     /**
-     * reset input $_POST, $_GET, $_FILES
+     * reset all of the form input $_POST, $_GET, $_FILES
      *
      * @return $this
      */
@@ -845,6 +848,8 @@ class Formbuilder {
         unset($_POST);
         unset($_GET);
         unset($_FILES);
+        unset($this->fields);
+        unset($this->rules);
 
         return $this;
     }
@@ -935,7 +940,7 @@ class Formbuilder {
         $fields = explode(',',$field_list);
 
         foreach ($fields as $field) {
-            if ( $this->get_field($field) === false )
+            if (  $this->warnings_on && $this->get_field($field) === false )
                 trigger_error("field $field unknown", E_USER_WARNING );
 
             $value = $this->post($field);
