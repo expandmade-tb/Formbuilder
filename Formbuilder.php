@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 1.8.1
+ * Version 2.0.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -62,13 +62,13 @@ class Formbuilder {
      * @param string $form_id the form of the id
      * @param array $args one or more of the following arguments:
      * 
-     *| arg       | default      | description |
-     *|:----------|:-------------|:--------------------------|
-     *| action    | ''           | sets the form action      |
-     *| string    | ''           | additional form attributs |
-     *| method    | 'post'       | the form method to use    |
-     *| wrapper   | 'bootstrap'  | which wrapper to use      |
-     *| lang      | 'en'         | sets the language         |
+     *| arg       | default        | description 
+     *|:----------|:---------------|:-----------------------------
+     *| action    | = ''           | : sets the form action      
+     *| string    | = ''           | : additional form attributs 
+     *| method    | = 'post'       | : the form method to use    
+     *| wrapper   | = 'bootstrap'  | : which wrapper to use      
+     *| lang      | = 'en'         | : sets the language         
      *
      * @return void
      */
@@ -94,13 +94,10 @@ class Formbuilder {
     }
     
     protected function add_field (string $name, string $element, bool $append=true) {
-        if ( substr($name, 0, 1) == '*' || $this->get_field($name) === false )
-            if ( $append )
-                $this->fields[] = new Field($name, $element);
-            else
-                array_unshift($this->fields, new Field($name, $element));
+        if ( $append )
+            $this->fields[] = new Field($name, $element);
         else
-            throw new Exception("fields already exists: ".$name);
+            array_unshift($this->fields, new Field($name, $element));
     }
 
     protected function get_field (string $name) {
@@ -172,6 +169,10 @@ class Formbuilder {
     protected function inline_js() {
         $id = array_key_first($this->errors);
         return "<script>const element = document.getElementById('$id'); element.scrollIntoView(); </script>";
+    }
+
+    protected function beautify (string $name) : string {
+        return ucwords(str_replace(['_', '-', '.'], ' ', $name));
     }
     
     /**
@@ -369,47 +370,84 @@ class Formbuilder {
     /**
      * creates an input field type text
      *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param string $string additional attributes
-     * @param string $value input fields value
-     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
+     * 
      * @return $this
      */
-    public function text (string $name, string $label='', string $string='', string $value='') {
+    public function text (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $string = '';
+        $value = '';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
 
         if ( $post != null) 
             $value = $post;
 
-        $element = Wrapper::elements('text', $name, $this->lang($label), $name, $value, $string);
+        $element = Wrapper::elements('text', $name, $this->lang($label), $id, $value, $string);
         $this->add_field($name, $element);
         return $this;
     }
 
     /**
      * creates an input field type password
-     *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param string $string additional attributes
-     * @param string $value input fields value
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
      *
      * @return $this
      */
-    public function password (string $name, string $label='', string $string='', string $value='') {
+    public function password (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $string = '';
+        $value = '';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
 
         if ( $post != null) 
             $value = $post;
 
-        $element = Wrapper::elements('password', $name, $this->lang($label), $name, $value, $string);
+        $element = Wrapper::elements('password', $name, $this->lang($label), $id, $value, $string);
         $this->add_field($name, $element);
         return $this;
     }
 
-    public function hidden(string $name, string $value='', $string='') {
-        $element = Wrapper::elements('hidden', $name, '', $name, $value, $string);
+    /**
+     * creates an input field type hidden
+     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
+
+     * @return $this
+     */
+    public function hidden(string $name, array $args=[] ) {
+        $string = '';
+        $value = '';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
+        $element = Wrapper::elements('hidden', $name, '', $id, $value, $string);
         $this->add_field($name, $element);
         return $this;
     }
@@ -417,20 +455,30 @@ class Formbuilder {
     /**
      * creates an input field type date
      *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param string $string additional attributes
-     * @param string $value input fields value
-     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
+
      * @return $this
      */
-    public function date (string $name, string $label='', string $string='', string $value='') {
+    public function date (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $string = '';
+        $value = '';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
 
         if ( $post != null) 
             $value = $post;
 
-        $element = Wrapper::elements('date', $name, $this->lang($label), $name, $value, $string);
+        $element = Wrapper::elements('date', $name, $this->lang($label), $id, $value, $string);
         $this->add_field($name, $element);
         return $this;
     }
@@ -438,20 +486,30 @@ class Formbuilder {
     /**
      * creates an input field type datetime
      *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param string $string additional attributes
-     * @param string $value input fields value
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
      *
      * @return $this
      */
-    public function datetime (string $name, string $label='', string $string='', string $value='') {
+    public function datetime (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $string = '';
+        $value = '';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
 
         if ( $post != null) 
             $value = $post;
 
-        $element = Wrapper::elements('datetime', $name, $this->lang($label), $name, $value, $string);
+        $element = Wrapper::elements('datetime', $name, $this->lang($label), $id, $value, $string);
         $this->add_field($name, $element);
         return $this;
     }
@@ -459,14 +517,24 @@ class Formbuilder {
     /**
      * creates an input field type checkbox
      *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param bool $checked checkbox checked | unchecked
-     * @param string $string additional attributes
-     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| checked   | : the input field is checked / not checked
+     *| id        | : the input fields id      
+
      * @return $this
      */
-    public function checkbox (string $name, string $label='', bool $checked=false, string $string='') {
+    public function checkbox (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $checked=false;
+        $string='';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
         $value = '';
 
@@ -479,7 +547,7 @@ class Formbuilder {
             if ( $value === $post )
                 $value = 'checked';
             
-        $element = Wrapper::elements('checkbox', $name, $this->lang($label), $name, $value, $string.$value);
+        $element = Wrapper::elements('checkbox', $name, $this->lang($label), $id, $value, $value.' '.$string);
         $this->add_field($name, $element);
         return $this;
     }
@@ -487,22 +555,45 @@ class Formbuilder {
     /**
      * creates an input field type radio
      *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param bool $checked radio checked | unchecked
-     * @param string $string additional attributes
+     * @param string $name the input field name
+     * @param string $label the input field label text
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| value     | : the label text for this radio button 
+     *| string    | : additional field attributes
+     *| checked   | : is the radio button checked / not checked
+     *| id        | : the input fields id      
      *
      * @return $this
      */
-    public function radio (string $name, string $id, string $value, string $label='',bool $checked=false, string $string='') {
+    public function radio (string $name, string $label, array $args=[] ) {
+        $checked=false;
+        $value='';
+        $id='';
+        $string='';
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
 
-        if ( $checked )
-            $checked = 'checked';
-        else
-            $checked = '';
+        if ( empty($id) )
+            $id = preg_replace('/[^a-zA-Z0-9]+/', '_', $label);
 
-        $element = Wrapper::elements('radio', $name, $this->lang($label), $id, $value, $string.' '.$checked);
+        if ( empty($value) )
+            $value = $id;
+
+        if ( !$this->submitted() )
+            if ( $checked )
+                $checked = 'checked ';
+            else
+                $checked = '';
+        else
+            if ( $value === $post )
+                $checked = 'checked';
+            else
+                $checked = '';
+
+        $element = Wrapper::elements('radio', $name, $this->lang($label), $id, $value, $checked.' '.$string);
         $this->add_field($name, $element);
         return $this;
     }
@@ -510,15 +601,25 @@ class Formbuilder {
     /**
      * creates an input field type select
      *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param string $valuelist the fields optional values spararated by ','
-     * @param string $value input fields value
-     * @param string $string additional attributes
-     *
+     * @param string $name the input field name
+     * @param string $valuelist a list of comma separated values
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
+
      * @return $this
      */
-    public function select (string $name, string $label='',string $valuelist='' , string $value='', string $string='')  {
+    public function select (string $name, string $valuelist, array $args=[] ) {
+        $label = $this->beautify($name);
+        $value='';
+        $string='';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
 
         if ( $post != null) 
@@ -533,7 +634,7 @@ class Formbuilder {
             else
                 $opt .= '<option value="'.$option.'">'.$option.'</option>';
 
-        $element = Wrapper::elements('select', $name, $this->lang($label), $name, $opt, $string);
+        $element = Wrapper::elements('select', $name, $this->lang($label), $id, $opt, $string);
         $this->add_field($name, $element);
         return $this;
     }
@@ -541,15 +642,25 @@ class Formbuilder {
     /**
      * creates an input field type datalist
      *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param string $valuelist the fields optional values spararated by ','
-     * @param string $value input fields value
-     * @param string $string additional attributes
-     *
+     * @param string $name the input field name
+     * @param string $valuelist a list of comma separated values
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
+
      * @return $this
      */
-    public function datalist (string $name, string $label='', string $valuelist='' , string $value='', string $string='')  {
+    public function datalist (string $name,  string $valuelist, array $args=[] ) {
+        $label = $this->beautify($name);
+        $value='';
+        $string='';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
 
         if ( $post != null) 
@@ -561,7 +672,7 @@ class Formbuilder {
         foreach ($arr_value as $key => $option) 
             $opt .= '<option value="'.$option.'">';
 
-        $element = Wrapper::elements('datalist', $name, $this->lang($label), $name, $value, $string, $opt);
+        $element = Wrapper::elements('datalist', $name, $this->lang($label), $id, $value, $string, $opt);
         $this->add_field($name, $element);
         return $this;
     }
@@ -569,22 +680,34 @@ class Formbuilder {
     /**
      * creates an input field type textarea
      *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param int $rows size / amount of rows 
-     * @param int $cols size / amount of cols
-     * @param string $string additional attributes
-     * @param string $value input fields value
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
+     *| rows      | : size / amount of rows       
+     *| cols      | : size / amount of cols      
      *
      * @return $this
      */
-    public function textarea (string $name, string $label, int $rows=2, int $cols=40, string $string='', string $value='') {
+    public function textarea (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $rows=2;
+        $cols=40;
+        $string='';
+        $value='';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
 
         if ( $post != null) 
             $value = $post;
 
-        $element = Wrapper::elements('textarea', $name, $this->lang($label), $name, $value, $string, '', $rows, $cols);
+        $element = Wrapper::elements('textarea', $name, $this->lang($label), $id, $value, $string, '', $rows, $cols);
         $this->add_field($name, $element);
         return $this;
     }
@@ -592,20 +715,30 @@ class Formbuilder {
     /**
      * creates an input field type file
      *
-     * @param string $name the input fields name
-     * @param string $label label text for the input field
-     * @param string $string additional attributes
-     * @param string $value input fields value
-     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
+     * 
      * @return $this
      */
-    public function file (string $name, string $label='', string $string='', string $value='') {
+    public function file (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $string='';
+        $value='';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
 
         if ( $post != null) 
             $value = $post;
 
-        $element = Wrapper::elements('file', $name, $this->lang($label), $name, $value, $string);
+        $element = Wrapper::elements('file', $name, $this->lang($label), $id, $value, $string);
         $this->add_field($name, $element);
         return $this;
     }
@@ -658,12 +791,15 @@ class Formbuilder {
     /**
      * adds a rule for later validation
      *
-     * @param string $name the name of the field to validate
-     * @param callable|string  $rule either one of the built-in validations by its name or a callback function
-     * 
      * @return $this
      */
-    public function rule ( string $name, $rule) {
+    public function rule ( $rule, $name='') {
+        if ( empty($name) ) // if left empty we assume its the last added field (working on method chaining only ! )
+            $name = end($this->fields)->name;
+        else
+            if ( $this->get_field($name) === false )
+                trigger_error("field $name unknown", E_USER_WARNING );
+
         switch ($rule) {
             case 'required':
                 $this->add_rule($name, array($this,'val_empty'));
@@ -799,6 +935,9 @@ class Formbuilder {
         $fields = explode(',',$field_list);
 
         foreach ($fields as $field) {
+            if ( $this->get_field($field) === false )
+                trigger_error("field $field unknown", E_USER_WARNING );
+
             $value = $this->post($field);
 
             if ( $value === null )
