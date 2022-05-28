@@ -17,6 +17,9 @@ Some methods are throwing warnings. This value can be set to true when you are t
 
 Input generating methods do have generally the following parameters: *(string $name, string $label='', string $string='', string $value='')*
 
+### <span style="color: green;">add_lang</span>
+adds a translation file 
+
 ### <span style="color: green;">checkbox</span>
 creates an input field of type checkbox
 

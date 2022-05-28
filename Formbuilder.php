@@ -4,12 +4,11 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.0.1
+ * Version 2.1.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
 
-use Exception;
 use Formbuilder\Wrapper\Wrapper;
 Use Formbuilder\StatelessCSRF;
 
@@ -87,10 +86,11 @@ class Formbuilder {
         $this->form_id = $form_id;
         $this->form='<form name="'.$form_id.'" id="'.$form_id.'" action="'.$action.'" method="'.$method.'" '.$string.' >';
 
-        if ( !file_exists(__DIR__ . "/$lang.php") )
+        if ( !file_exists(__DIR__ . "/$lang.php") ) 
             $lang = 'en';
 
         $this->i18n = require(__DIR__ . "/i18n/$lang.php");
+
         Wrapper::factory($wrapper);
     }
     
@@ -177,7 +177,20 @@ class Formbuilder {
     protected function beautify (string $name) : string {
         return ucwords(str_replace(['_', '-', '.'], ' ', $name));
     }
-    
+        
+    /**
+     * add a language translation file 
+     *
+     * @param string $filename  the language file
+     *
+     * @return $this
+     */
+    public function add_lang (string $filename) {
+        $add_lang = require($filename);
+        $this->i18n = array_merge($this->i18n, $add_lang);
+        return $this;
+    }
+
     /**
      * checks if the passed value contains {} and treats the $value as a keyword to lookup in the translation script.
      * if the keyword cannot be found the function will return the passed value, otherwise the translation.
@@ -340,7 +353,7 @@ class Formbuilder {
         if ( empty($value) )
             $value = $name;
 
-        $element = Wrapper::elements('submit', $name, '', $name, $value, $string);
+        $element = Wrapper::elements('submit', $name, '', $name, $this->lang($value), $string);
         $this->add_field($name, $element);
         return $this;
     }
@@ -361,7 +374,7 @@ class Formbuilder {
         foreach ($names as $key => $name) {
             $value = !empty($values[$key]) == true ? $values[$key] : $name;
             $string = !empty($strings[$key]) == true ? $strings[$key] : '';
-            $element = Wrapper::element_parts('submit_bar_element', $name, '', $name, $value, $string);
+            $element = Wrapper::element_parts('submit_bar_element', $name, '', $name, $this->lang($value), $string);
             $this->add_field($name, $element);
         }
 
@@ -954,7 +967,7 @@ class Formbuilder {
 
             if ( !empty($ruleset) ) {
                 foreach ($ruleset as $key => $rule) {
-                    $err = call_user_func($rule, $value);
+                    $err = $this->lang(call_user_func($rule, $value));
 
                     if ( !empty($err) ) {
                         $this->error_msg($field, $err);

@@ -1,0 +1,7 @@
+v2.1 
+- another language file can be added
+- error message can be translated
+- submit and submit_bar values can be translated
+
+v2.0
+- the first release
