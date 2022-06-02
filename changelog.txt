@@ -1,3 +1,7 @@
+v2.1.1
+- missing translation for message
+- missing label in bootstrap wrapper for input select
+
 v2.1 
 - another language file can be added
 - error message can be translated

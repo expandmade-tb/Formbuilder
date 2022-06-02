@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.1.0
+ * Version 2.1.1
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -989,7 +989,7 @@ class Formbuilder {
      * @return $this
      */
     public function message (string $message, $string='') {
-        $element = Wrapper::elements('message', 'msg', '', '', $message, $string);
+        $element = Wrapper::elements('message', 'msg', '', '', $this->lang($message), $string);
         $this->add_field('alert_message', $element, false);
         return $this;
     }

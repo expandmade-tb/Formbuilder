@@ -51,12 +51,14 @@ return [
     </div>',
     'select' =>
     '<div class="mb-3">
+        <label for="[:name]" class="form-label">[:label]</label>
         <select [:class-ovwr] class="form-select" name="[:name]" id="[:id]" [:attributes]>
             [:value]
         </select>
     </div>',
     'datalist' =>
-    '<div class="mb-3">
+        '<div class="mb-3">
+        <label for="[:name]" class="form-label">[:label]</label>
         <input [:class-ovwr] class="form-control" name="[:name]" list="list_[:id]" id="[:id]" value="[:value]" [:attributes]>
         <datalist id="list_[:id]">
             [:options]
