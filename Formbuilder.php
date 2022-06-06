@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.1.1
+ * Version 2.1.2
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -248,6 +248,9 @@ class Formbuilder {
      * @return string empty | error message
      */
     public function val_numeric ( $value ) : string {
+        if ( empty($value) )
+            return '';
+
         if (is_array($value) ) {
             foreach ($value as $key => $single_value) 
                 if ( !is_numeric($single_value) ) 
@@ -288,6 +291,9 @@ class Formbuilder {
      * @return string empty | error message
      */
     public function val_integer ( $value ) : string {
+        if ( empty($value) )
+            return '';
+            
         if (is_array($value) ) {
             foreach ($value as $key => $single_value) 
                 if ( !is_numeric($single_value) || intval($single_value) != $single_value )
@@ -308,6 +314,9 @@ class Formbuilder {
      * @return string empty | error message
      */
     public function val_date ( $value ) : string {
+        if ( empty($value) )
+            return '';
+            
         if (is_array($value) ) {
             foreach ($value as $key => $single_value) 
                 if ( strtotime($single_value) === false )
@@ -328,6 +337,9 @@ class Formbuilder {
      * @return string empty | error message
      */
     public function val_email ($value) :string {
+        if ( empty($value) )
+            return '';
+            
         if (is_array($value) ) {
             foreach ($value as $key => $single_value)
                 if ( filter_var($value, FILTER_VALIDATE_EMAIL) === false )
@@ -593,7 +605,7 @@ class Formbuilder {
         $post = $this->post($name);
 
         if ( empty($id) )
-            $id = preg_replace('/[^a-zA-Z0-9]+/', '_', $label);
+            $id = preg_replace('/[^a-zA-Z0-9]+/', '_', str_replace(['{','}'],'', $label));
 
         if ( empty($value) )
             $value = $id;
