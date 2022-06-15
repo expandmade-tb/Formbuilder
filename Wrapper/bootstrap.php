@@ -1,7 +1,12 @@
 <?php
 
-// replacements: [:name]','[:label]','[:id]','[:value]','[:attributes]','[:options]','[:row]','[:col]
-// class overwrite: [:class-ovwr]
+/*
+    replacements:
+        [:name], [:label], [:id], [:value], [:attributes], [:options], [:row], [:col], [:min], [:max], [:step]
+    
+    class overwrite:
+        [:class-ovwr]
+*/
 
 return [
     'elements'=> //--- single elements
@@ -10,6 +15,11 @@ return [
     '<div class="mb-3">
         <label for="[:name]" class="form-label">[:label]</label>
         <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+    </div>',
+    'number' =>
+    '<div class="mb-3">
+        <label for="[:name]" class="form-label">[:label]</label>
+        <input type="number" name="[:name]" id="[:id]" value="[:value]" min="[:min]" max="[:max]" step="[:step]" [:class-ovwr] class="form-control" [:attributes]>
     </div>',
     'password' =>
     '<div class="mb-3">

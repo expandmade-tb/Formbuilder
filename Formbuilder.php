@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.1.2
+ * Version 2.2.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -422,6 +422,43 @@ class Formbuilder {
             $value = $post;
 
         $element = Wrapper::elements('text', $name, $this->lang($label), $id, $value, $string);
+        $this->add_field($name, $element);
+        return $this;
+    }
+
+    /**
+     * creates an input field type number
+     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
+     *| min       | : the input fields minimum value, default is 1   
+     *| max       | : the input fields maximum value, default is 10
+     *| step      | : the input fields spinner steps, default is 1
+     * 
+     * @return $this
+     */
+    public function number (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $string = '';
+        $value = '';
+        $id = $name;
+        $min = 1;
+        $max = 10;
+        $step = 1;
+        extract($args, EXTR_IF_EXISTS);
+        $post = $this->post($name);
+
+        if ( $post != null) 
+            $value = $post;
+
+        $element = Wrapper::elements('number', $name, $this->lang($label), $id, $value, $string,'','','',$min,$max,$step);
         $this->add_field($name, $element);
         return $this;
     }

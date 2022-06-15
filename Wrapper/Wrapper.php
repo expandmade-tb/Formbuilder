@@ -17,7 +17,7 @@ class Wrapper {
         self::$element_parts_array = $array["element_parts"];
     }
 
-    public static function elements (string $key, $name='', $label='', $id='', $value='', $attribute='', $options='', $row='', $col='') : string {
+    public static function elements (string $key, $name='', $label='', $id='', $value='', $attribute='', $options='', $row='', $col='', $min='', $max='', $step='') : string {
         self::factory('');
         $result = self::$elements_array[$key];
 
@@ -26,11 +26,11 @@ class Wrapper {
             $result = preg_replace($pattern, $attribute,  $result);
         }
 
-        return str_replace(['[:name]','[:label]','[:id]','[:value]','[:attributes]','[:options]','[:row]','[:col]','[:class-ovwr]'],
-                             [$name,$label,$id,$value,$attribute,$options,$row,$col,''],$result);
+        return str_replace(['[:name]','[:label]','[:id]','[:value]','[:attributes]','[:options]','[:row]','[:col]','[:class-ovwr]','[:min]','[:max]','[:step]'],
+                             [$name,$label,$id,$value,$attribute,$options,$row,$col,'',$min,$max,$step],$result);
     }
 
-    public static function element_parts (string $key, $name='', $label='', $id='', $value='', $attribute='', $options='', $row='', $col='') : string {
+    public static function element_parts (string $key, $name='', $label='', $id='', $value='', $attribute='', $options='', $row='', $col='', $min='', $max='', $step='') : string {
         self::factory('');
         $result = self::$element_parts_array[$key];
 
@@ -40,6 +40,6 @@ class Wrapper {
         }
 
         return str_replace(['[:name]','[:label]','[:id]','[:value]','[:attributes]','[:options]','[:row]','[:col]','[:class-ovwr]'],
-                             [$name,$label,$id,$value,$attribute,$options,$row,$col,''],$result);
+                             [$name,$label,$id,$value,$attribute,$options,$row,$col,'',$min,$max,$step],$result);
     }
 }  

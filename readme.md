@@ -76,6 +76,11 @@ adds an alerting message at the top of the form
 
 &mdash; <u>example:</u> *$form->message('mail could not be sent');*
 
+### <span style="color: green;">number</span>
+creates an input field of type number
+
+&mdash; <u>example:</u> *$form->number('amt',['label'=>'How many', 'value'=>1]);*
+
 ### <span style="color: green;">password</span>
 creates an input field of type password
 

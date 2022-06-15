@@ -1,3 +1,6 @@
+v2.2.0
+- added input type number
+
 v2.1.2
 - automatic id creation in radio function did not filter {}
 - build in validation functions do not require a value anymore
