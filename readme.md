@@ -64,7 +64,7 @@ creates an input field of type file
 &mdash; <u>example:</u> *$form->file('file_field');*
 
 ### <span style="color: green;">grid</span>
-adds a table grid to the form - each cell is a text input field
+adds a table grid to the form - each cell is a text input field (keep in mind that the resulting data will be a multidimensional array)
 
 &mdash; <u>example:</u> *$form->grid('grid', ['label'=>'Field Grid', 'rows'=>3, 'cols'=>2] );*
 
@@ -219,7 +219,7 @@ This is a code snipet of a class presenting a simple contact form:
         $form = new Formbuilder('contactform');
         $form->text('name')->rule('required');
         $form->text('email')->rule('email');
-        $form->text('phone')->rule('val_phone');
+        $form->text('phone')->rule([$this, 'val_phone']);
         $form->textarea('message', ['label'=>'Leave us a message']);
         $form->checkbox('agreement', ['label'=>'I agree with your policy terms', 'checked'=>false])->rule('required');
         $form->submit('submit');
