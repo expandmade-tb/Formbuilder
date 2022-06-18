@@ -63,6 +63,11 @@ creates an input field of type file
 
 &mdash; <u>example:</u> *$form->file('file_field');*
 
+### <span style="color: green;">grid</span>
+adds a table grid to the form - each cell is a text input field
+
+&mdash; <u>example:</u> *$form->grid('grid', ['label'=>'Field Grid', 'rows'=>3, 'cols'=>2] );*
+
 ### <span style="color: green;">html</span>
 adds whatever html to the form
 
@@ -186,7 +191,7 @@ There are a few already existing "builtin" rules:
 ### <span style="color: green;">3.2 The method parameter string</span>
 All methods generating input field do have a parameter **string $string=''**. With this parameter you can pass attributes like *readonly, required* etc. These will be added to the attributes already predefined in the wrapper.**But !**, if you use a string like *class="container xyz"*, the original classes will be overwritten and you will have to add them manually.
 
-### <span style="color: green;">3.3 Translatin of labels</span>
+### <span style="color: green;">3.3 Translation of labels</span>
 Every label will be checked and a translation will be looked up in the i18n directory when the label is marked as {}:
 
         $form = new Formbuilder('contactform', ['lang'=>'es');
@@ -214,7 +219,7 @@ This is a code snipet of a class presenting a simple contact form:
         $form = new Formbuilder('contactform');
         $form->text('name')->rule('required');
         $form->text('email')->rule('email');
-        $form->text('phone');
+        $form->text('phone')->rule('val_phone');
         $form->textarea('message', ['label'=>'Leave us a message']);
         $form->checkbox('agreement', ['label'=>'I agree with your policy terms', 'checked'=>false])->rule('required');
         $form->submit('submit');

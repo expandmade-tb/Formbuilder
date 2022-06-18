@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.2.0
+ * Version 2.3.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -241,7 +241,7 @@ class Formbuilder {
     }
 
     /**
-     * built in standard validation rule 
+     * built in standard validation rule for a single field
      *
      * @param mixed $value checks if numeric
      *
@@ -251,40 +251,28 @@ class Formbuilder {
         if ( empty($value) )
             return '';
 
-        if (is_array($value) ) {
-            foreach ($value as $key => $single_value) 
-                if ( !is_numeric($single_value) ) 
-                    return $this->get_i18n('val_numeric');
-        }
-        else
-            if ( !is_numeric($value) ) 
-                return $this->get_i18n('val_numeric');
+        if ( !is_numeric($value) ) 
+            return $this->get_i18n('val_numeric');
 
         return  '';
     }
 
     /**
-     * built in standard validation rule 
+     * built in standard validation rule for a single field
      *
      * @param mixed $value checks if not empty
      *
      * @return string empty | error message
      */
     public function val_empty ( $value ) : string {
-        if (is_array($value) ) {
-            foreach ($value as $key => $single_value) 
-                if ( empty($single_value) ) 
-                    return $this->get_i18n('val_empty');
-        }
-        else
-            if ( empty($value) ) 
-                return $this->get_i18n('val_empty');
+        if ( empty($value) ) 
+            return $this->get_i18n('val_empty');
 
         return  '';
     }
         
     /**
-     * built in standard validation rule 
+     * built in standard validation rule for a single field 
      *
      * @param mixed $value checks if integer
      *
@@ -294,20 +282,14 @@ class Formbuilder {
         if ( empty($value) )
             return '';
             
-        if (is_array($value) ) {
-            foreach ($value as $key => $single_value) 
-                if ( !is_numeric($single_value) || intval($single_value) != $single_value )
-                    return $this->get_i18n('val_integer');
-        }
-        else
-            if ( !is_numeric($value) || intval($value) != $value )
-                return $this->get_i18n('val_integer');
+        if ( !is_numeric($value) || intval($value) != $value )
+            return $this->get_i18n('val_integer');
         
         return '';
     }
 
     /**
-     * built in standard validation rule 
+     * built in standard validation rule for a single field 
      *
      * @param mixed $value checks if date
      *
@@ -317,20 +299,14 @@ class Formbuilder {
         if ( empty($value) )
             return '';
             
-        if (is_array($value) ) {
-            foreach ($value as $key => $single_value) 
-                if ( strtotime($single_value) === false )
-                    return $this->get_i18n('val_date');
-        }
-        else
-            if ( strtotime($value) === false )
-                return $this->get_i18n('val_date');
+        if ( strtotime($value) === false )
+            return $this->get_i18n('val_date');
 
         return '';
     }
     
     /**
-     * built in standard validation rule 
+     * built in standard validation rule for a single field 
      *
      * @param mixed $value checks if email
      *
@@ -340,14 +316,8 @@ class Formbuilder {
         if ( empty($value) )
             return '';
             
-        if (is_array($value) ) {
-            foreach ($value as $key => $single_value)
-                if ( filter_var($value, FILTER_VALIDATE_EMAIL) === false )
-                    return $this->get_i18n('val_email');
-        }
-        else 
-            if ( filter_var($value, FILTER_VALIDATE_EMAIL) === false )
-                return $this->get_i18n('val_email');
+        if ( filter_var($value, FILTER_VALIDATE_EMAIL) === false )
+            return $this->get_i18n('val_email');
 
         return '';
     }
@@ -1010,7 +980,12 @@ class Formbuilder {
             if ( $value === null )
                 $result[$field] = null;
             else
-                $result[$field] = filter_var(strip_tags($value),FILTER_SANITIZE_SPECIAL_CHARS);
+                if ( is_array($value) )
+                    foreach ($value as $row_key => $row_value) 
+                        foreach ($row_value as $col_key => $col_value)
+                            $result[$field][$row_key][$col_key] = filter_var(strip_tags($col_value),FILTER_SANITIZE_SPECIAL_CHARS);
+                else
+                    $result[$field] = filter_var(strip_tags($value),FILTER_SANITIZE_SPECIAL_CHARS);
             
             $ruleset = $this->get_rule($field);
 
@@ -1052,6 +1027,57 @@ class Formbuilder {
      */
     public function html (string $value ) {
         $this->add_field('*html', $value);
+        return $this;
+    }
+    
+    /**
+     * add an input grid
+     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the grid fields values 
+     *| id        | : the input fields id      
+     *| rows      | : size / amount of rows       
+     *| cols      | : size / amount of cols      
+     *
+     * @return $this
+     */
+    public function grid ( string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $id = $name;
+        $value=[];
+        $string='';
+        $rows = 2;
+        $cols = 2;
+        extract($args, EXTR_IF_EXISTS);
+
+        $post = $this->post($name); 
+
+        if ( $post != null) 
+            $value = $post;
+
+        $html = Wrapper::element_parts('grid_header', $name, $label, $id).PHP_EOL;
+
+        for ($r=0; $r < $rows; $r++) { 
+            $html .= '<tr>';
+            
+            for ($c=0; $c < $cols; $c++) { 
+                $cell_name = $name . "[$r][$c]";
+                $cell_id = $name . "-$r-$c";
+                $cell_value = $value[$r][$c]??'';
+                $html .= Wrapper::element_parts('grid_cell', $cell_name, $label, $cell_id, $cell_value, $string);
+            }
+
+            $html .= '</tr>'.PHP_EOL;
+        }
+
+        $html .= Wrapper::element_parts('grid_footer');
+        $this->add_field($name, $html);
         return $this;
     }
 

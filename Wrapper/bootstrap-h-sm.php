@@ -131,6 +131,18 @@ return [
         '       <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>',
         'submit_bar_footer' =>
         '   </div>
+        </div>',
+        'grid_header'=>
+        '<div class="form-group row">
+            <label for="[:name]" class="col-sm-2 col-form-label">[:label]</label>
+            <div class="col-sm-4">
+               <table id="[:id]">' 
+        ,
+        'grid_cell' =>
+        '<td><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]><td>'
+        ,
+        'grid_footer'=>
+        '   </table>
         </div>'
     ]
 ];

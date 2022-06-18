@@ -97,9 +97,23 @@ return [
         '<div class="mb-3">'
         ,
         'submit_bar_element' =>
-        '       <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>',
+        '       <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>'
+        ,
         'submit_bar_footer' =>
         '   </div>
         </div>'
+        ,
+        'grid_header'=>
+        '<div class="mb-3">
+            <label for="[:name]" class="form-label">[:label]</label>
+            <table id="[:id]">'
+        ,
+        'grid_cell' =>
+        '<td><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]><td>'
+        ,
+        'grid_footer'=>
+        '   </table>
+        </div>'
     ]
 ];
+ 
