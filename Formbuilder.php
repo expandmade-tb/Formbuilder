@@ -610,6 +610,7 @@ class Formbuilder {
         $string='';
         extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
+        $checked_val = '';
 
         if ( empty($id) )
             $id = preg_replace('/[^a-zA-Z0-9]+/', '_', str_replace(['{','}'],'', strip_tags($label)));
@@ -969,6 +970,21 @@ class Formbuilder {
 
         $result = array();
         $fields = explode(',',$field_list);
+
+        if ( $this->warnings_on ) {
+            $def_flds = [];
+
+            foreach ($this->fields as $key => $field) {
+                $name = $field->name;
+                if ( substr($name,0, 1) != '*' ) $def_flds[] = $name;
+            }
+            
+            $no_validates = implode(',', array_diff($def_flds, $fields));
+
+            if ( !empty($no_validates) )
+                trigger_error("fields [$no_validates] not validated", E_USER_WARNING );
+        }
+
 
         foreach ($fields as $field) {
             if (  $this->warnings_on && $this->get_field($field) === false )

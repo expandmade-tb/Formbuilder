@@ -1,4 +1,5 @@
 v2.3.1
+- added warning if validated fields are not equal to declared fields
 - checkbox and radio wer not working correctly with set_prePOST function
 - default id creation in radio has to be stripped from html tags
 
