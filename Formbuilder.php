@@ -612,7 +612,7 @@ class Formbuilder {
         $post = $this->post($name);
 
         if ( empty($id) )
-            $id = preg_replace('/[^a-zA-Z0-9]+/', '_', str_replace(['{','}'],'', $label));
+            $id = preg_replace('/[^a-zA-Z0-9]+/', '_', str_replace(['{','}'],'', strip_tags($label)));
 
         if ( empty($value) )
             $value = $id;
