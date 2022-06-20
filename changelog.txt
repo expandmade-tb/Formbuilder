@@ -1,5 +1,6 @@
 v2.3.1
 - checkbox and radio wer not working correctly with set_prePOST function
+- default id creation in radio has to be stripped from html tags
 
 v2.3.0
 - added input type grid
