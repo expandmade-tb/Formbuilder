@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.3.0
+ * Version 2.3.1
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -571,17 +571,17 @@ class Formbuilder {
         $id = $name;
         extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
-        $value = '';
 
-        if ( !$this->submitted() )
-            if ( $checked )
-                $value = 'checked';
+        if ( $this->submitted() )
+            $value = $post === null ? '' : 'checked';
+        else {
+            if ( array_key_exists($name, $this->prePOST) )
+                $value = $post === null ? '' : 'checked';
             else
-                $value = '';
-        else
-            if ( $value === $post )
-                $value = 'checked';
-            
+                if ( $checked )
+                    $value = 'checked';
+        }
+
         $element = Wrapper::elements('checkbox', $name, $this->lang($label), $id, $value, $value.' '.$string);
         $this->add_field($name, $element);
         return $this;
@@ -617,18 +617,17 @@ class Formbuilder {
         if ( empty($value) )
             $value = $id;
 
-        if ( !$this->submitted() )
-            if ( $checked )
-                $checked = 'checked ';
+        if ( $this->submitted() )
+            $checked_val = $post != $value ? '' : 'checked';
+        else {
+            if ( array_key_exists($name, $this->prePOST) )
+                $checked_val = $post != $value ? '' : 'checked';
             else
-                $checked = '';
-        else
-            if ( $value === $post )
-                $checked = 'checked';
-            else
-                $checked = '';
+                if ( $checked )
+                    $checked_val = 'checked';
+        }
 
-        $element = Wrapper::elements('radio', $name, $this->lang($label), $id, $value, $checked.' '.$string);
+        $element = Wrapper::elements('radio', $name, $this->lang($label), $id, $value, $checked_val.' '.$string);
         $this->add_field($name, $element);
         return $this;
     }
