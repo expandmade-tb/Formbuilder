@@ -351,7 +351,7 @@ class Formbuilder {
      */
     public function submit_bar (array $names, array $values=[], array $strings=[]) {
         $element = Wrapper::element_parts('submit_bar_header', '*submit_bar_header');
-        $this->add_field('_submit_bar_header', $element);
+        $this->add_field('*submit_bar_header', $element);
 
         foreach ($names as $key => $name) {
             $value = !empty($values[$key]) == true ? $values[$key] : $name;
@@ -571,6 +571,7 @@ class Formbuilder {
         $id = $name;
         extract($args, EXTR_IF_EXISTS);
         $post = $this->post($name);
+        $value = '';
 
         if ( $this->submitted() )
             $value = $post === null ? '' : 'checked';
