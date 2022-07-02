@@ -1,3 +1,10 @@
+v2.4
+- parameter valuelist in functions select and datalist is now mixed
+- additional parameter 'field' is passed to validation callback functions
+- a new type of input field 'search' has been added to cater with live search
+- a javascript 'livesearch.js' added 
+- the statelessCSRF class is not automacially loaded anymore
+
 v2.3.1
 - added warning if validated fields are not equal to declared fields
 - checkbox and radio wer not working correctly with set_prePOST function

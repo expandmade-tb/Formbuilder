@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.3.1
+ * Version 2.4.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -74,7 +74,6 @@ class Formbuilder {
      */
     function __construct(string $form_id, array $args=[]) {
         require(__DIR__.'/Wrapper/Wrapper.php');
-        require(__DIR__.'/StatelessCSRF.php');
 
         $action = '';
         $string = '';
@@ -177,7 +176,7 @@ class Formbuilder {
     protected function beautify (string $name) : string {
         return ucwords(str_replace(['_', '-', '.'], ' ', $name));
     }
-        
+ 
     /**
      * add a language translation file 
      *
@@ -244,10 +243,11 @@ class Formbuilder {
      * built in standard validation rule for a single field
      *
      * @param mixed $value checks if numeric
+     * @param string $field the name of the field to be checked
      *
      * @return string empty | error message
      */
-    public function val_numeric ( $value ) : string {
+    public function val_numeric ( $value, string $field ) : string {
         if ( empty($value) )
             return '';
 
@@ -261,10 +261,11 @@ class Formbuilder {
      * built in standard validation rule for a single field
      *
      * @param mixed $value checks if not empty
+     * @param string $field the name of the field to be checked
      *
      * @return string empty | error message
      */
-    public function val_empty ( $value ) : string {
+    public function val_empty ( $value, string $field ) : string {
         if ( empty($value) ) 
             return $this->get_i18n('val_empty');
 
@@ -275,10 +276,11 @@ class Formbuilder {
      * built in standard validation rule for a single field 
      *
      * @param mixed $value checks if integer
+     * @param string $field the name of the field to be checked
      *
      * @return string empty | error message
      */
-    public function val_integer ( $value ) : string {
+    public function val_integer ( $value, string $field ) : string {
         if ( empty($value) )
             return '';
             
@@ -292,10 +294,11 @@ class Formbuilder {
      * built in standard validation rule for a single field 
      *
      * @param mixed $value checks if date
+     * @param string $field the name of the field to be checked
      *
      * @return string empty | error message
      */
-    public function val_date ( $value ) : string {
+    public function val_date ( $value, string $field ) : string {
         if ( empty($value) )
             return '';
             
@@ -309,10 +312,11 @@ class Formbuilder {
      * built in standard validation rule for a single field 
      *
      * @param mixed $value checks if email
+     * @param string $field the name of the field to be checked
      *
      * @return string empty | error message
      */
-    public function val_email ($value) :string {
+    public function val_email ($value, string $field ) :string {
         if ( empty($value) )
             return '';
             
@@ -333,7 +337,7 @@ class Formbuilder {
      */
     public function submit (string $name, string $value='', string $string='') {
         if ( empty($value) )
-            $value = $name;
+            $value = $this->beautify($name);
 
         $element = Wrapper::elements('submit', $name, '', $name, $this->lang($value), $string);
         $this->add_field($name, $element);
@@ -354,9 +358,9 @@ class Formbuilder {
         $this->add_field('*submit_bar_header', $element);
 
         foreach ($names as $key => $name) {
-            $value = !empty($values[$key]) == true ? $values[$key] : $name;
-            $string = !empty($strings[$key]) == true ? $strings[$key] : '';
-            $element = Wrapper::element_parts('submit_bar_element', $name, '', $name, $this->lang($value), $string);
+            $value = !empty($values[$key])  ? $values[$key] : $this->beautify($name);
+            $string = !empty($strings[$key]) ? $strings[$key] : '';
+            $element = Wrapper::element_parts('submit_bar_element', $name, '', $name.'-'.$key, $this->lang($value), $string);
             $this->add_field($name, $element);
         }
 
@@ -364,7 +368,122 @@ class Formbuilder {
         $this->add_field('*submit_bar_footer', $element);
         return $this;
     }
-            
+    
+    /**
+     * create a button
+     *
+     * @param string $name the buttons name
+     * @param string $value the buttons value
+     * @param string $onclick adds either a js event / or a href to the button
+     * @param string $type adds the buttons type: button | submit | reset
+     * @param string $string additional attributes
+     *
+     * @return void
+     */
+    public function button (string $name, string $value='', string $onclick='', string $type='button', string $string='' ) {
+        if ( empty($name) )
+            $value=$this->beautify($name);
+
+        $element = Wrapper::elements('button', $name, '', $name, $this->lang($value), $string);
+
+        if ( !empty($onclick) ) {
+            if ( preg_match('/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/', $onclick) === 1 )
+                $click = "window.location.href='$onclick'";
+            else
+                $click = $onclick;
+
+            $replacement = 'type="'.$type.'"'.' onclick="'.$click.'"';
+        }
+        else
+            $replacement = 'type="'.$type.'"';
+
+        $final_element = str_replace('type="button"', $replacement, $element);
+        $this->add_field($name, $final_element);
+        return $this;        
+    }
+
+    /**
+     * create a button-bar
+     *
+     * @param string $name the buttons name
+     * @param string $value the buttons value
+     * @param string $onclick adds either a js event / or a href to the button
+     * @param string $type adds the buttons type: button | submit | reset
+     * @param string $string additional attributes
+     *
+     * @return void
+     */
+    public function button_bar (array $names, array $values=[], array $onclicks=[], array $types=[], array $strings=[] ) {
+        $element = Wrapper::element_parts('button_bar_header', '*button_bar_header');
+        $this->add_field('*button_bar_header', $element);
+
+        foreach ($names as $key => $name) {
+            $value = !empty($values[$key]) ? $values[$key] : $this->beautify($name);
+            $onclick = !empty($onclicks[$key]) ? $onclicks[$key] : '';
+            $type = !empty($types[$key]) ? $types[$key] : 'button';
+            $string = !empty($strings[$key]) ? $strings[$key] : '';
+            $element = Wrapper::element_parts('button_bar_element', $name, '', $name.'-'.$key, $this->lang($value), $string);
+
+            if ( !empty($onclick) ) {
+                if ( preg_match('/(http[s]?:\/\/)?([^\/\s]+\/)(.*)/', $onclick) === 1 )
+                    $click = "window.location.href='$onclick'";
+                else
+                    $click = $onclick;
+    
+                $replacement = 'type="'.$type.'"'.' onclick="'.$click.'"';
+            }
+            else
+                $replacement = 'type="'.$type.'"';
+        
+            $final_element = str_replace('type="button"', $replacement, $element);
+            $this->add_field($name, $final_element);
+        }
+
+        $element = Wrapper::element_parts('button_bar_footer', '*button_bar_footer');
+        $this->add_field('*button_bar_footer', $element);
+        return $this;
+    }
+
+    /**
+     * creates an input field type search
+     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | : label text for the input field 
+     *| string    | : additional field attributes
+     *| value     | : the input fields value 
+     *| id        | : the input fields id      
+     *
+     * @param array $oninput adds a js input event (mostly thought to implement a live search)
+     * 
+     * @return $this
+     */
+    public function search (string $name, array $args=[], $oninput='') {
+        $label = $this->beautify($name);
+        $string = '';
+        $value = '';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
+        $post = $this->post($name);
+
+        if ( $post != null) 
+            $value = $post;
+
+        $element = Wrapper::elements('search', $name, $this->lang($label), $id, $value, $string);
+
+        if ( empty($oninput) )
+            $replacement = '';
+        else
+            $replacement = 'oninput="'.$oninput.';"';
+
+        $final_element = str_replace('oninput=""', $replacement, $element);
+        $this->add_field($name, $final_element);
+        return $this;
+    }
+
     /**
      * creates an input field type text
      *
@@ -638,7 +757,7 @@ class Formbuilder {
      * creates an input field type select
      *
      * @param string $name the input field name
-     * @param string $valuelist a list of comma separated values
+     * @param array|string $valuelist a list of comma separated values or an array
      * @param array $args one or more of the following arguments:
      * 
      *| arg       | description 
@@ -650,7 +769,7 @@ class Formbuilder {
 
      * @return $this
      */
-    public function select (string $name, string $valuelist, array $args=[] ) {
+    public function select (string $name, $valuelist, array $args=[] ) {
         $label = $this->beautify($name);
         $value='';
         $string='';
@@ -661,7 +780,11 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
             
-        $arr_value = explode(',', $valuelist);
+        if ( is_array($valuelist) )
+            $arr_value = $valuelist;
+        else
+            $arr_value = explode(',', $valuelist);
+
         $opt = '';
 
         foreach ($arr_value as $key => $option)
@@ -679,7 +802,7 @@ class Formbuilder {
      * creates an input field type datalist
      *
      * @param string $name the input field name
-     * @param string $valuelist a list of comma separated values
+     * @param string|array $valuelist a list of comma separated values
      * @param array $args one or more of the following arguments:
      * 
      *| arg       | description 
@@ -691,7 +814,7 @@ class Formbuilder {
 
      * @return $this
      */
-    public function datalist (string $name,  string $valuelist, array $args=[] ) {
+    public function datalist (string $name,  $valuelist, array $args=[] ) {
         $label = $this->beautify($name);
         $value='';
         $string='';
@@ -702,7 +825,11 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
             
-        $arr_value = explode(',', $valuelist);
+        if ( is_array($valuelist) )
+            $arr_value = $valuelist;
+        else
+            $arr_value = explode(',', $valuelist);
+
         $opt = '';
 
         foreach ($arr_value as $key => $option) 
@@ -933,11 +1060,11 @@ class Formbuilder {
     /**
      * validates the form with given rules after the form was submitted
      *
-     * @param string $field_list a list of comma separated fields to validate on given rules
+     * @param string|array $field_list a list of comma separated fields to validate on given rules
      *
      * @return mixed returns an array of the fields and their values | false if csrf token or timer are 'invalid'
      */
-    public function validate (string $field_list)  {
+    public function validate ($field_list)  {
         
         if ( $this->use_session ) {
             if ( ( $_POST['_token'] != $_SESSION['csrf-token'] )) {
@@ -970,7 +1097,11 @@ class Formbuilder {
         }
 
         $result = array();
-        $fields = explode(',',$field_list);
+
+        if ( is_array($field_list) )
+            $fields = $field_list;
+        else
+            $fields = explode(',',$field_list);
 
         if ( $this->warnings_on ) {
             $def_flds = [];
@@ -1007,7 +1138,7 @@ class Formbuilder {
 
             if ( !empty($ruleset) ) {
                 foreach ($ruleset as $key => $rule) {
-                    $err = $this->lang(call_user_func($rule, $value));
+                    $err = $this->lang(call_user_func($rule, $value, $field));
 
                     if ( !empty($err) ) {
                         $this->error_msg($field, $err);

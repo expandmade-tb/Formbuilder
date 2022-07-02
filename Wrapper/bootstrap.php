@@ -45,6 +45,10 @@ return [
     '<div class="mb-3">
         <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>
     </div>',
+    'button' =>
+    '<div class="mb-3">
+        <button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>
+    </div>',
     'checkbox' =>
     '<div class="mb-3">
         <div class="form-check form-check-inline">
@@ -103,6 +107,16 @@ return [
         '   </div>
         </div>'
         ,
+        'button_bar_header' =>
+        '<div class="mb-3">'
+        ,
+        'button_bar_element' =>
+            '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>'
+        ,
+        'button_bar_footer' =>
+        '   </div>
+        </div>'
+        ,
         'grid_header'=>
         '<div class="mb-3">
             <label for="[:name]" class="form-label">[:label]</label>
@@ -112,7 +126,8 @@ return [
         '<td><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]><td>'
         ,
         'grid_footer'=>
-        '   </table>
+        '      </table>
+            </div>
         </div>'
     ]
 ];

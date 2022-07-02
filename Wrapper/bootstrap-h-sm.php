@@ -60,6 +60,13 @@ return [
             <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>
         </div>
     </div>',
+    'button' =>
+    '<div class="form-group row">
+        <label class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-4">
+            <button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>
+        </div>
+    </div>',
     'checkbox' =>
     '<div class="form-group row">
         <label class="col-sm-2 col-form-label"></label>
@@ -119,6 +126,17 @@ return [
     </div>',
     'hidden' =>
         '<input type="hidden" name="[:name]" id="[:id]" value="[:value]" [:attributes]>'
+    ,
+    'search' =>
+    '<div class="form-group row">
+        <label for="[:name]" class="col-sm-2 col-form-label">[:label]</label>
+        <div class="col-sm-4">
+            <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes] oninput="">
+            <ul class="dropdown-menu" id="[:id]-results" style="display:none">
+                <li class="dropdown-item">?</li>
+            </ul>
+        </div>
+    </div>'
     ],
     'element_parts' => //--- multiple elements
     [
@@ -128,10 +146,24 @@ return [
             <div class="col-sm-4">'
         ,
         'submit_bar_element' =>
-        '       <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>',
+        '       <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>'
+        ,
         'submit_bar_footer' =>
         '   </div>
-        </div>',
+        </div>'
+        ,
+        'button_bar_header' =>
+        '<div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-4">'
+        ,
+        'button_bar_element' =>
+            '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>'
+        ,
+        'button_bar_footer' =>
+        '   </div>
+        </div>'
+        ,
         'grid_header'=>
         '<div class="form-group row">
             <label for="[:name]" class="col-sm-2 col-form-label">[:label]</label>
@@ -142,7 +174,8 @@ return [
         '<td><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]><td>'
         ,
         'grid_footer'=>
-        '   </table>
+        '      </table>
+            </div>
         </div>'
     ]
 ];

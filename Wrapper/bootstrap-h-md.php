@@ -60,6 +60,13 @@ return [
             <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>
         </div>
     </div>',
+    'button' =>
+    '<div class="form-group row">
+        <label class="col-md-2 col-form-label"></label>
+        <div class="col-md-8">
+            <button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>
+        </div>
+    </div>',
     'checkbox' =>
     '<div class="form-group row">
         <label class="col-md-2 col-form-label"></label>
@@ -128,10 +135,24 @@ return [
         <div class="col-md-8">'
     ,
     'submit_bar_element' =>
-    '       <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>',
+    '       <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>'
+    ,
     'submit_bar_footer' =>
     '   </div>
-    </div>',
+    </div>'
+    ,
+    'button_bar_header' =>
+    '<div class="form-group row">
+        <label class="col-md-2 col-form-label"></label>
+        <div class="col-md-8">'
+    ,
+    'button_bar_element' =>
+        '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>'
+    ,
+    'button_bar_footer' =>
+    '   </div>
+    </div>'
+    ,
     'grid_header'=>
     '<div class="form-group row">
         <label for="[:name]" class="col-md-2 col-form-label">[:label]</label>
@@ -142,7 +163,8 @@ return [
     '<td><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]><td>'
     ,
     'grid_footer'=>
-    '   </table>
+    '      </table>
+        </div>
     </div>'
     ]
 ];

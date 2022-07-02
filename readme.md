@@ -20,6 +20,15 @@ Input generating methods do have generally the following parameters: *(string $n
 ### <span style="color: green;">add_lang</span>
 adds a translation file 
 
+### <span style="color: green;">button</span>
+creates a button with either a js event or a href to the button
+
+&mdash; <u>example:</u> $form->button('click_btn','click me','http:example.com');  
+&mdash; <u>example:</u> $form->button('click_btn','click me','onclick="myfucntion();"');
+
+### <span style="color: green;">button_bar</span>
+creates a button bar with either a js event or a href to the button
+
 ### <span style="color: green;">checkbox</span>
 creates an input field of type checkbox
 
@@ -117,6 +126,11 @@ reset (unsets) input $_POST, $_GET, $_FILES and defined form fields and rules
 adds a rule for later validation
 
 &mdash; <u>example:</u> *$form->rule('phone', [$this, 'val_phone']); ( [usage](#Usage) )
+
+### <span style="color: green;">search</span>
+creates an input field type search - with the oninput event a live search can be implemented
+
+&mdash; <u>example:</u> $form->search('search', ['label'=>'Live Search'],"livesearchResults(this, '/livesearch/search', '$ajax_token')");
 
 ### <span style="color: green;">select</span>
 creates an input field of type select
