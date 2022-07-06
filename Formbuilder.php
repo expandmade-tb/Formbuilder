@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.4.0
+ * Version 2.4.1
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -85,7 +85,7 @@ class Formbuilder {
         $this->form_id = $form_id;
         $this->form='<form name="'.$form_id.'" id="'.$form_id.'" action="'.$action.'" method="'.$method.'" '.$string.' >';
 
-        if ( !file_exists(__DIR__ . "/$lang.php") ) 
+        if ( !file_exists(__DIR__ . "/i18n/$lang.php") ) 
             $lang = 'en';
 
         $this->i18n = require(__DIR__ . "/i18n/$lang.php");
