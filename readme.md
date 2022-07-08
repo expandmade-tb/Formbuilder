@@ -1,7 +1,13 @@
 # **Formbuilder**
 
-A lightweihgt php form builder to quickly generate and validate html forms using Bootstrap 5. Other CSS frameworks can easily be adapted. Internationalization is supported and the library is indepentent from other PHP frameworks.
+A lightweihgt php form builder to quickly generate and validate html forms using Bootstrap 5. Other CSS frameworks can easily be adapted. Internationalization is supported and the library is indepentent from other PHP frameworks. This file is based on the release 2.4.  
+___
+
 # Properties
+- [Methods](#methods)
+- [Translation](#translation)  
+- [Skeleton](#skeleton)
+___
 
 ## check_timer
 ```PHP
@@ -25,7 +31,10 @@ Some methods are throwing warnings. This value can be set to true when you are t
 ___
 
 # Methods
-
+- [Properties](#properties)
+- [Translation](#translation)  
+- [Skeleton](#skeleton)
+___
 ## Formbuilder constructor
 ```PHP
 function __construct(string $form_id, array $args=[])
@@ -659,7 +668,10 @@ Validates the whole form based on the defined rules. The field list can either b
 ___
 
 # Translation
-
+- [Properties](#properties)
+- [Methods](#methods)
+- [Skeleton](#skeleton)
+___
 To define a language to be used for all translations, pass the lang parameter during form creation. The default language is 'en'.
 
 ```PHP
@@ -695,4 +707,35 @@ Save it under your choosen path and name it **en.php** and your done. Do the sam
     $auth_text = $form->lang('{authorization}');
     $form->submit('submit','{submit}');
 
+```
+# Skeleton
+- [Properties](#properties)
+- [Methods](#methods)
+- [Translation](#translation)  
+___
+Just a copy and paste skeleton.
+
+```PHP
+    $form = new Formbuilder('form', ['string'=>'enctype="multipart/form-data"', 'wrapper'=>'bootstrap-h-md']);
+    $form->text('field1', ['label'=>'field1 label:'])->rule('required');
+    $form->fieldset_open('Your choices:');
+    $form->radio('radio', 'option 1:', ['checked'=>true, 'value'=>'option1']);
+    $form->radio('radio', 'option 2:', ['value'=>'option2']);
+    $form->fieldset_close();
+    $form->checkbox('checkbox1',['label'=>'checkbox', 'checked'=>true]);
+    $form->submit('submit','submit');
+
+    if ( $form->submitted() ) {
+        $data = $form->validate('field1');
+
+        if ( $data === false )
+            $form->message('something went wrong');
+        
+        if ( $form->ok() ) {
+                $form->reset()->message('all done', 'class="alert alert-success" ');
+                // do something with $data here
+        }
+
+        echo $form->render();
+    }
 ```
