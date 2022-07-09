@@ -1,3 +1,8 @@
+v2.4.2
+- kommentare überarbeitet
+- zusätzliche warnungen hinzugefügt
+v2.4.1
+- language 'en' was always used in constructor 
 v2.4
 - parameter valuelist in functions select and datalist is now mixed
 - additional parameter 'field' is passed to validation callback functions

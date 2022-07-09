@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.4.1
+ * Version 2.4.2
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -62,13 +62,13 @@ class Formbuilder {
      * @param string $form_id the form of the id
      * @param array $args one or more of the following arguments:
      * 
-     *| arg       | default        | description 
-     *|:----------|:---------------|:-----------------------------
-     *| action    | = ''           | : sets the form action      
-     *| string    | = ''           | : additional form attributs 
-     *| method    | = 'post'       | : the form method to use    
-     *| wrapper   | = 'bootstrap'  | : which wrapper to use      
-     *| lang      | = 'en'         | : sets the language         
+     *| arg       | default      | description 
+     *|:----------|:-------------|:-----------------------------
+     *| action    | ''           | sets the form action      
+     *| string    | ''           | additional form attributes 
+     *| method    | 'post'       | the form method to use    
+     *| wrapper   | 'bootstrap'  | which wrapper to use      
+     *| lang      | 'en'         | sets the language         
      *
      * @return void
      */
@@ -452,10 +452,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
      *
      * @param array $oninput adds a js input event (mostly thought to implement a live search)
      * 
@@ -492,10 +492,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
      * 
      * @return $this
      */
@@ -523,13 +523,13 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
-     *| min       | : the input fields minimum value, default is 1   
-     *| max       | : the input fields maximum value, default is 10
-     *| step      | : the input fields spinner steps, default is 1
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
+     *| min       | the input fields minimum value, default is 1   
+     *| max       | the input fields maximum value, default is 10
+     *| step      | the input fields spinner steps, default is 1
      * 
      * @return $this
      */
@@ -559,10 +559,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
      *
      * @return $this
      */
@@ -590,9 +590,9 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
 
      * @return $this
      */
@@ -614,10 +614,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
 
      * @return $this
      */
@@ -645,10 +645,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
      *
      * @return $this
      */
@@ -676,10 +676,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| checked   | : the input field is checked / not checked
-     *| id        | : the input fields id      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| checked   | the input field is checked / not checked
+     *| id        | the input fields id      
 
      * @return $this
      */
@@ -716,10 +716,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| value     | : the label text for this radio button 
-     *| string    | : additional field attributes
-     *| checked   | : is the radio button checked / not checked
-     *| id        | : the input fields id      
+     *| value     | the label text for this radio button 
+     *| string    | additional field attributes
+     *| checked   | is the radio button checked / not checked
+     *| id        | the input fields id      
      *
      * @return $this
      */
@@ -762,10 +762,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
 
      * @return $this
      */
@@ -807,10 +807,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
 
      * @return $this
      */
@@ -848,12 +848,12 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
-     *| rows      | : size / amount of rows       
-     *| cols      | : size / amount of cols      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
+     *| rows      | size / amount of rows       
+     *| cols      | size / amount of cols      
      *
      * @return $this
      */
@@ -883,10 +883,10 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the input fields value 
-     *| id        | : the input fields id      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
      * 
      * @return $this
      */
@@ -1065,7 +1065,7 @@ class Formbuilder {
      * @return mixed returns an array of the fields and their values | false if csrf token or timer are 'invalid'
      */
     public function validate ($field_list)  {
-        
+               
         if ( $this->use_session ) {
             if ( ( $_POST['_token'] != $_SESSION['csrf-token'] )) {
                 $this->error_msg('_token', $this->get_i18n('val_csrf'));
@@ -1101,7 +1101,7 @@ class Formbuilder {
         if ( is_array($field_list) )
             $fields = $field_list;
         else
-            $fields = explode(',',$field_list);
+            $fields = array_map('trim',explode(',',$field_list));
 
         if ( $this->warnings_on ) {
             $def_flds = [];
@@ -1116,7 +1116,6 @@ class Formbuilder {
             if ( !empty($no_validates) )
                 trigger_error("fields [$no_validates] not validated", E_USER_WARNING );
         }
-
 
         foreach ($fields as $field) {
             if (  $this->warnings_on && $this->get_field($field) === false )
@@ -1185,12 +1184,12 @@ class Formbuilder {
      * 
      *| arg       | description 
      *|:----------|:-----------------------------------------------
-     *| label     | : label text for the input field 
-     *| string    | : additional field attributes
-     *| value     | : the grid fields values 
-     *| id        | : the input fields id      
-     *| rows      | : size / amount of rows       
-     *| cols      | : size / amount of cols      
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the grid fields values 
+     *| id        | the input fields id      
+     *| rows      | size / amount of rows       
+     *| cols      | size / amount of cols      
      *
      * @return $this
      */
@@ -1234,6 +1233,9 @@ class Formbuilder {
      * @return array
      */
     public function render () : string {
+        $fieldset_mismatches = 0;
+        $div_mismatches = 0;
+ 
         $result = $this->form.PHP_EOL;
         $result .= $this->csrf().PHP_EOL;
         $result .= $this->honeypot().PHP_EOL;
@@ -1242,6 +1244,24 @@ class Formbuilder {
             $result .= $this->timer().PHP_EOL;
 
         foreach ($this->fields as $key => $field) {
+
+            if ( $this->warnings_on ) {
+                switch ($field->name) {
+                    case '*fieldset_open':
+                        $fieldset_mismatches++;
+                        break;
+                    case '*fieldset_close':
+                        $fieldset_mismatches--;
+                        break;
+                    case '*div_open':
+                        $div_mismatches++;
+                        break;
+                    case '*div_close':
+                        $div_mismatches--;
+                        break;
+                }
+            }
+
             $result .= $field->element.PHP_EOL;
 
             if ( isset($this->errors[$field->name]) ) 
@@ -1252,7 +1272,15 @@ class Formbuilder {
        
         if ( !empty($this->errors) )
             $result .= $this->inline_js();
-       
+
+        if (  $this->warnings_on ) {
+            if ( $fieldset_mismatches != 0 )
+                trigger_error("fieldset mismatch(es) found: $fieldset_mismatches", E_USER_WARNING );
+
+            if ( $div_mismatches != 0 )
+                trigger_error("div mismatch(es) found: $div_mismatches", E_USER_WARNING );
+        }
+            
         return $result;
     }
 }

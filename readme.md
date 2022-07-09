@@ -1,6 +1,6 @@
 # **Formbuilder**
 
-A lightweihgt php form builder to quickly generate and validate html forms using Bootstrap 5. Other CSS frameworks can easily be adapted. Internationalization is supported and the library is indepentent from other PHP frameworks. This file is based on the release 2.4.  
+A lightweight php form builder to quickly generate and validate html forms using Bootstrap 5. Other CSS frameworks can easily be adapted. Internationalization is supported and the library is independent from other PHP frameworks. This file is based on the release 2.4.  
 ___
 
 # Properties
@@ -13,14 +13,14 @@ ___
 ```PHP
 public int $check_timer = 0;
 ```
-This property determines the time, in seconds, between entering form data and submitting the form. If the given time has not been reached, the form validation will always return false, asuming it is a bot because a user cannot enter data in that short time. Setting this property to zero no check will be made.
+This property determines the time, in seconds, between entering form data and submitting the form. If the given time has not been reached, the form validation will always return false, assuming it is a bot because a user cannot enter data in that short time. Setting this property to zero no check will be made.
 ___
 
 ## use_session
 ```PHP
 public bool $use_session = false;
 ```
-A CSRF check will automatcially added to the form. If *use_session* is set to true, the csrf-token will be stored in a session, which means a session has to be available. By default a stateless token will be used.
+A CSRF check will automatically added to the form. If *use_session* is set to true, the csrf-token will be stored in a session, which means a session has to be available. By default a stateless token will be used.
 ___
 
 ## warnings_on
@@ -44,7 +44,7 @@ Creates a new instance of the formbuilder class. The following arguments in ***a
 | arg       | default     | description 
 |:----------|:-------------|:-----------------------------
 | actio     | ''           | sets the form action      
-| string    | ''           | additional form attributs 
+| string    | ''           | additional form attributes 
 | method    | 'post'       | the form method to use    
 | wrapper   | 'bootstrap'  | which wrapper to use      
 | lang      | 'en'         | sets the language         
@@ -195,7 +195,7 @@ ___
 ```PHP
 public function div_open (string $string='')
 ```
-Opens a div. Counerpart to the **div_close()** function.
+Opens a div. Counterpart to the **div_close()** function.
 
 *example:*
 ```PHP
@@ -356,7 +356,7 @@ Checks if a form has errors after a validation.
     if ( $form->submitted() ) {
         $data = $form->validate('name,email,phone,message');
 
-        if ( $data === false ) // caused by csrf check, honypot or timer check
+        if ( $data === false ) // caused by csrf check, honeypot or timer check
             $form->message('something went wrong');
 
         if ( $form->ok() ) {
@@ -412,7 +412,7 @@ Adds an input field type radio to the form. After submit the value of the label 
     if ( $form->submitted() ) {
         $data = $form->validate('tfield,radio'); // get contents of the radio group -> radio
 
-        if ( $data === false ) // caused by csrf check, honypot or timer check
+        if ( $data === false ) // caused by csrf check, honeypot or timer check
             $form->message('something went wrong');
 
         if ( $form->ok() ) {
@@ -579,7 +579,7 @@ Checks if the form was submitted, which means we can start to process the form w
     if ( $form->submitted() ) { //can we start to process the form ?
         $data = $form->validate('name,email,phone,message');
 
-        if ( $data === false ) // caused by csrf check, honypot or timer check
+        if ( $data === false ) // caused by csrf check, honeypot or timer check
             $form->message('something went wrong');
 
         if ( $form->ok() ) {
