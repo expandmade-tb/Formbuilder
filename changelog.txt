@@ -1,3 +1,5 @@
+v2.5.0
+- added function render_array
 v2.4.2
 - comments revised
 - added additional warnings

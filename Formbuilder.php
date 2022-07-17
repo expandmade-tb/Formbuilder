@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.4.2
+ * Version 2.5.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -1230,7 +1230,7 @@ class Formbuilder {
     /**
      * returns the form ready for the view
      *
-     * @return array
+     * @return string
      */
     public function render () : string {
         $fieldset_mismatches = 0;
@@ -1272,6 +1272,62 @@ class Formbuilder {
        
         if ( !empty($this->errors) )
             $result .= $this->inline_js();
+
+        if (  $this->warnings_on ) {
+            if ( $fieldset_mismatches != 0 )
+                trigger_error("fieldset mismatch(es) found: $fieldset_mismatches", E_USER_WARNING );
+
+            if ( $div_mismatches != 0 )
+                trigger_error("div mismatch(es) found: $div_mismatches", E_USER_WARNING );
+        }
+            
+        return $result;
+    }
+    
+    /**
+     * returns the form fields in an array of html strings
+     *
+     * @return array
+     */
+    public function render_array() : array {
+        $result = [];
+        $fieldset_mismatches = 0;
+        $div_mismatches = 0;
+ 
+        $result['form'] = $this->form;
+        $result['csrf'] = $this->csrf();
+        $result['honeypot'] = $this->honeypot();
+
+        if ( $this->check_timer )
+            $result['timer'] = $this->timer();
+
+        foreach ($this->fields as $key => $field) {
+
+            if ( $this->warnings_on ) {
+                switch ($field->name) {
+                    case '*fieldset_open':
+                        $fieldset_mismatches++;
+                        break;
+                    case '*fieldset_close':
+                        $fieldset_mismatches--;
+                        break;
+                    case '*div_open':
+                        $div_mismatches++;
+                        break;
+                    case '*div_close':
+                        $div_mismatches--;
+                        break;
+                }
+            }
+
+            $result[$field->name] = $field->element;
+
+            if ( isset($this->errors[$field->name]) ) 
+                $result[$field->name.'-error'] = Wrapper::elements('alert', $field->name, '', '', $this->errors[$field->name]); 
+        }
+
+        if ( !empty($this->errors) )
+            $result['script'] = $this->inline_js();
 
         if (  $this->warnings_on ) {
             if ( $fieldset_mismatches != 0 )

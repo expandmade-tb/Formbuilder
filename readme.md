@@ -435,6 +435,14 @@ public function render () : string
 Renders the whole form and returns it as an html string.
 ___
 
+## render_array
+```PHP
+public function render_array () : array 
+```
+
+Renders the whole form and returns it as an array of html string with the field names as key.
+___
+
 ## reset
 ```PHP
 public function reset ()
