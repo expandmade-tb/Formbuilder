@@ -260,6 +260,27 @@ Adds a table to the form - each cell is a text input field (keep in mind that th
 *example:*
 ```PHP
     $form->grid('grid', ['label'=>'Grid', 'rows'=>3, 'cols'=>2] );
+
+    $form->grid('mash',
+    [
+        'label'=>'',
+        'rows'=>4,
+        'cols'=>3,
+        'value'=>[
+            ['Row 1','b1','c1'],
+            ['Row 2','b2','c2'],
+            ['Row 3','b3','c3'],
+            ['Row 4','b4','c4']
+        ],
+        'string'=>[
+            ['readonly'],
+            ['readonly'],
+            ['readonly'],
+            ['readonly'],
+            ['readonly']
+        ]
+    ]);
+
 ```
 __
 
