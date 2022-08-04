@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.5.0
+ * Version 2.5.2
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -56,6 +56,16 @@ class Formbuilder {
     public bool $use_session = false;
     public bool $warnings_on = false;
 
+    private function char_map(string $chr) : int {
+        $chr=strtolower($chr);
+        return ord($chr)-ord('a');
+     }
+
+     private function map_char(int $int) : string {
+        $int += ord('a');
+        return chr($int);
+     }
+     
     /**
      * Method __construct
      *
@@ -92,7 +102,7 @@ class Formbuilder {
 
         Wrapper::factory($wrapper);
     }
-    
+
     protected function add_field (string $name, string $element, bool $append=true) {
         if ( $append )
             $this->fields[] = new Field($name, $element);
@@ -1200,6 +1210,7 @@ class Formbuilder {
         $string='';
         $rows = 2;
         $cols = 2;
+        $header=[];
         extract($args, EXTR_IF_EXISTS);
 
         $post = $this->post($name); 
@@ -1212,11 +1223,17 @@ class Formbuilder {
         for ($r=0; $r < $rows; $r++) { 
             $html .= '<tr>';
             
-            for ($c=0; $c < $cols; $c++) { 
+            for ($c=0; $c < $cols; $c++) {
                 $cell_name = $name . "[$r][$c]";
-                $cell_id = $name . "-$r-$c";
+                $cell_id = $id . '-'.$this->map_char($c).$r;
                 $cell_value = $value[$r][$c]??'';
-                $html .= Wrapper::element_parts('grid_cell', $cell_name, $label, $cell_id, $cell_value, $string);
+
+                if ( is_array($string) )
+                    $attributes = $string[$r][$c]??'';
+                else
+                    $attributes = $string;
+
+                $html .= Wrapper::element_parts('grid_cell', $cell_name, $label, $cell_id, $cell_value, $attributes);
             }
 
             $html .= '</tr>'.PHP_EOL;
