@@ -37,6 +37,7 @@ class Wrapper {
         if ( strpos($attribute, 'class=') !== false ) {
             $pattern = "/\[:class-ovwr\]\s?class\s?=\s?([\"'])(.*?)\\1/";
             $result = preg_replace($pattern, $attribute,  $result);
+            $attribute='';
         }
 
         return str_replace(['[:name]','[:label]','[:id]','[:value]','[:attributes]','[:options]','[:row]','[:col]','[:class-ovwr]'],
