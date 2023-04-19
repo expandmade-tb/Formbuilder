@@ -4,6 +4,7 @@ return [
     'val_empty' => 'ein Wert ist erforderlich',
     'val_integer' =>  'Wert ist keine Ganzzahl',
     'val_date' =>  'ungültiges Datum',
+    'val_time' =>  'ungültige Zeit',
     'val_email' =>  'ungültige E-Mail',
     'val_csrf' => 'ungültiges Csrf-Token',
     'val_hopo' => 'ungültige Eingabe',
