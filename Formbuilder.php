@@ -4,11 +4,12 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.5.2
+ * Version 2.7.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
 
+use DateTime;
 use Formbuilder\Wrapper\Wrapper;
 Use Formbuilder\StatelessCSRF;
 
@@ -55,6 +56,10 @@ class Formbuilder {
     public int $check_timer = 0;
     public bool $use_session = false;
     public bool $warnings_on = false;
+    public string $date_format = 'Y-m-d';
+    public string $time_format = 'H:i';
+    public string $date_placeholder = 'yyyy-mm-dd';
+    public string $time_placeholder = 'hh:mm';
 
     private function char_map(string $chr) : int {
         $chr=strtolower($chr);
@@ -83,8 +88,6 @@ class Formbuilder {
      * @return void
      */
     function __construct(string $form_id, array $args=[]) {
-        require(__DIR__.'/Wrapper/Wrapper.php');
-
         $action = '';
         $string = '';
         $method = 'post';
@@ -312,12 +315,34 @@ class Formbuilder {
         if ( empty($value) )
             return '';
             
-        if ( strtotime($value) === false )
+        $d = DateTime::createFromFormat($this->date_format, $value);
+        
+        if ( ($d && $d->format($this->date_format) == $value) === false )
             return $this->get_i18n('val_date');
 
         return '';
     }
-    
+
+    /**
+     * built in standard validation rule for a single field 
+     *
+     * @param mixed $value checks if time
+     * @param string $field the name of the field to be checked
+     *
+     * @return string empty | error message
+     */
+    public function val_time ( $value, string $field ) : string {
+        if ( empty($value) )
+            return '';
+            
+        $d = DateTime::createFromFormat($this->time_format, $value);
+        
+        if ( ($d && $d->format($this->time_format) == $value) === false )
+            return $this->get_i18n('val_time');
+
+        return '';
+    }
+        
     /**
      * built in standard validation rule for a single field 
      *
@@ -526,6 +551,76 @@ class Formbuilder {
     }
 
     /**
+     * creates an input field type text, but only valid dates can be entered
+     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
+     * 
+     * @return $this
+     */
+    public function datetext (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $string = '';
+        $value = '';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
+        $post = $this->post($name);
+
+        if ( $post != null )
+            $value = $post;
+
+        if ( empty($string) )
+            $string = "placeholder=\"$this->date_placeholder\"";
+
+        $element = Wrapper::elements('text', $name, $this->lang($label), $id, $value, $string);
+        $this->add_field($name, $element);
+        $this->rule('date', $name);
+        return $this;
+    }
+
+    /**
+     * creates an input field type text, but only valid times can be entered
+     *
+     * @param string $name the input field name
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
+     * 
+     * @return $this
+     */
+    public function timetext (string $name, array $args=[] ) {
+        $label = $this->beautify($name);
+        $string = '';
+        $value = '';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
+        $post = $this->post($name);
+
+        if ( $post != null )
+            $value = $post;
+
+        if ( empty($string) )
+        $string = "placeholder=\"$this->time_placeholder\"";
+
+        $element = Wrapper::elements('text', $name, $this->lang($label), $id, $value, $string);
+        $this->add_field($name, $element);
+        $this->rule('time', $name);
+        return $this;
+    }
+
+    /**
      * creates an input field type number
      *
      * @param string $name the input field name
@@ -658,7 +753,7 @@ class Formbuilder {
      *| label     | label text for the input field 
      *| string    | additional field attributes
      *| value     | the input fields value 
-     *| id        | the input fields id      
+     *| id        | the input fields id   
      *
      * @return $this
      */
@@ -986,6 +1081,9 @@ class Formbuilder {
             case 'date':
                 $this->add_rule($name, array($this,'val_date'));
                 break;
+            case 'time':
+                $this->add_rule($name, array($this,'val_time'));
+                break;
             case 'email':
                 $this->add_rule($name, array($this,'val_email'));
                 break;
@@ -1077,7 +1175,7 @@ class Formbuilder {
     public function validate ($field_list)  {
                
         if ( $this->use_session ) {
-            if ( ( $_POST['_token'] != $_SESSION['csrf-token'] )) {
+            if ( ( $_POST['_token']??'' != $_SESSION['csrf-token'] )) {
                 $this->error_msg('_token', $this->get_i18n('val_csrf'));
                 return false;
             } 
@@ -1086,7 +1184,7 @@ class Formbuilder {
             $csrf_generator = new StatelessCSRF($this->secret);
             $csrf_generator->setGlueData('ip', $_SERVER['REMOTE_ADDR']);
             $csrf_generator->setGlueData('user-agent', $_SERVER['HTTP_USER_AGENT']);            
-            $result = $csrf_generator->validate($this->uid, $_POST['_token'], time());
+            $result = $csrf_generator->validate($this->uid, $_POST['_token']??'', time());
 
             if ( $result === false)
                 return false;

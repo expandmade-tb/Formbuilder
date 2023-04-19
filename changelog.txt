@@ -1,3 +1,11 @@
+v2.7.0
+- added input type timetext
+- format for date and time can be set
+- placeholder for date and time can be set
+- fixed validation of a date according to the date format
+- added validation of a time according to the time format 
+v2.6.0
+- added input type datetext 
 v2.5.2
 - add wrapper raw
 - correction in grid function when values / strings are not not set

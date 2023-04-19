@@ -1,12 +1,13 @@
 # **Formbuilder**
 
-A lightweight php form builder to quickly generate and validate html forms using Bootstrap 5. Other CSS frameworks can easily be adapted. Internationalization is supported and the library is independent from other PHP frameworks. This file is based on the release 2.4.  
+A lightweight php form builder to quickly generate and validate html forms using Bootstrap 5. Other CSS frameworks can easily be adapted. Internationalization is supported and the library is independent from other PHP frameworks. This file is based on the release 2.7.
 ___
 
 # Properties
 - [Methods](#methods)
-- [Translation](#translation)  
+- [Translation](#translation)
 - [Skeleton](#skeleton)
+
 ___
 
 ## check_timer
@@ -14,6 +15,34 @@ ___
 public int $check_timer = 0;
 ```
 This property determines the time, in seconds, between entering form data and submitting the form. If the given time has not been reached, the form validation will always return false, assuming it is a bot because a user cannot enter data in that short time. Setting this property to zero no check will be made.
+___
+
+## date_format
+```PHP
+public string $date_format = 'Y-m-d';
+```
+This property defines the format of the date. The format will be used when validating a date.
+___
+
+## date_placeholder
+```PHP
+public string $date_placeholder = 'yyyy-mm-dd';
+```
+This property defines the placeholder to be shown when using a datetext type of input fild.
+___
+
+## time_format
+```PHP
+public string $time_format = 'H:i';
+```
+This property defines the format of the time. The format will be used when validating a time.
+___
+
+## time_placeholder
+```PHP
+public string $time_placeholder = 'hh:mm';
+```
+This property defines the placeholder to be shown when using a timetext type of input fild.
 ___
 
 ## use_session
@@ -34,6 +63,7 @@ ___
 - [Properties](#properties)
 - [Translation](#translation)  
 - [Skeleton](#skeleton)
+
 ___
 ## Formbuilder constructor
 ```PHP
@@ -43,7 +73,7 @@ Creates a new instance of the formbuilder class. The following arguments in ***a
 
 | arg       | default     | description 
 |:----------|:-------------|:-----------------------------
-| actio     | ''           | sets the form action      
+| action    | ''           | sets the form action      
 | string    | ''           | additional form attributes 
 | method    | 'post'       | the form method to use    
 | wrapper   | 'bootstrap'  | which wrapper to use      
@@ -162,6 +192,25 @@ Adds an input field type date to the form. The following arguments in ***arg*** 
 *example:*
 ```PHP
     $form->date('date', ['value'=>date("Y-m-d")]);
+```
+___
+
+## datetext
+```PHP
+public function datetext (string $name, array $args=[] )
+```
+Adds an input field type text to the form, but only valid dates can be entered. The date will be validated according to date_format property. The following arguments in ***arg*** are valid:
+
+| arg       | description 
+|:----------|:-----------------------------------------------
+| label     | label text for the input field 
+| string    | additional field attributes
+| value     | the input fields value 
+| id        | the input fields id      
+
+*example:*
+```PHP
+    $form->datetext('date_field');
 ```
 ___
 
@@ -484,6 +533,7 @@ Adds a rule to a field which will be later checked in the function **validate()*
 + 'integer'
 + 'email'
 + 'date'
++ 'time'
 
 others you will have to define on your owhn.
 
@@ -663,6 +713,25 @@ Creates a form input field of type textarea. The following arguments in ***arg**
 ```
 ___
 
+## timetext
+```PHP
+public function timetext (string $name, array $args=[] )
+```
+Adds an input field type text to the form, but only valid times can be entered. The time will be validated according to time_format property. The following arguments in ***arg*** are valid:
+
+| arg       | description 
+|:----------|:-----------------------------------------------
+| label     | label text for the input field 
+| string    | additional field attributes
+| value     | the input fields value 
+| id        | the input fields id      
+
+*example:*
+```PHP
+    $form->timetext('texttime_field');
+```
+___
+
 ## validate
 ```PHP
 public function validate ($field_list) 
@@ -742,6 +811,7 @@ Save it under your choosen path and name it **en.php** and your done. Do the sam
 - [Methods](#methods)
 - [Translation](#translation)  
 ___
+
 Just a copy and paste skeleton.
 
 ```PHP
