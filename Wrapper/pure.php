@@ -24,53 +24,54 @@ return [
     'textarea' =>
         '<label for="[:id]">[:label]</label><textarea name="[:name]" id="[:id]" rows="[:row]" cols="[:col]" [:class-ovwr] [:attributes]>[:value]</textarea>',
     'submit' =>
-        '<input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] [:attributes]/>',
+        '<button type="submit" class="pure-button pure-button-primary" name="[:name]" id="[:id]" [:class-ovwr] [:attributes]>[:value]</button>',
     'button' =>
-        '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] >[:value]</button>',
+        '<button type="button" class="pure-button pure-button-primary" name="[:name]" id="[:id]" [:class-ovwr] [:attributes]>[:value]</button>',
     'checkbox' =>
-        '<label for="[:id]">[:label]</label><input [:class-ovwr] type="checkbox" name="[:name]" value="[:value]" id="[:id]" [:attributes]>',
+        '<label for="[:id]" class="pure-checkbox"><input type="checkbox" id="[:id]" value="[:value]" [:class-ovwr] [:attributes] /> [:label]</label>',
     'radio' =>
-        '<label for="[:id]">[:label]</label><input [:class-ovwr] type="radio" name="[:name]" value="[:value]" id="[:id]" [:attributes]>',
+        '<label for="[:id]" class="pure-radio"><input type="radio" id="[:id]" name="[:name]" value="[:value]" [:class-ovwr] [:attributes] /> [:label]</label>',
     'select' =>
         '<label for="[:id]">[:label]</label><select [:class-ovwr] name="[:name]" id="[:id]" [:attributes]>[:value]</select>',
     'datalist' =>
         '<label for="[:id]">[:label]</label><input [:class-ovwr] name="[:name]" list="list_[:id]" id="[:id]" value="[:value]" [:attributes]><datalist id="list_[:id]">[:options]</datalist>',
     'alert' =>
-        '<div class="text-danger">[:value]</div>',
+        '<span class="pure-form-message" style="color:red;">[:value]</span>',
     'message' =>
-        '<div [:class-ovwr] class="alert alert-danger" role="alert [:attributes]">[:value]</div>',
+        '<span class="pure-form-message" >[:value]</span>',
     'file' =>
-        '<label for="[:id]">[:label]</label><input type="file" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] [:attributes]></div>',
+        '<div><label for="[:name]"> [:label]</label><input type="file" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] [:attributes]></div>',
     'hidden' =>
         '<input type="hidden" name="[:name]" id="[:id]" value="[:value]" [:attributes]>',
     'search' =>
         '<label for="[:id]">[:label]</label><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] [:attributes] oninput="">
          <ul class="dropdown-menu" id="[:id]-results" style="display:none">
              <li class="dropdown-item">?</li>
-         </ul>'
+         </ul>',
+    'form' => 'pure-form pure-form-stacked'
     ],
     'element_parts' => //--- multiple elements
     [
     'submit_bar_header' =>
-    '<div class="fb-submit-bar">'
+    '<div class="pure-button-group" role="group">'
     ,
     'submit_bar_element' =>
-    '<input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] [:attributes]/>'
+    '<button type="submit" class="pure-button pure-button-primary" name="[:name]" id="[:id]" [:class-ovwr] [:attributes]>[:value]</button>'
     ,
     'submit_bar_footer' =>
     '</div></div>'
     ,
     'button_bar_header' =>
-    '<div class="fb-button-bar">'
+    '<div class="pure-button-group" role="group">'
     ,
     'button_bar_element' =>
-    '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] >[:value]</button>'
+    '<button type="button" class="pure-button pure-button-primary" name="[:name]" id="[:id]" [:class-ovwr] [:attributes]>[:value]</button>'
     ,
     'button_bar_footer' =>
     '</div>'
     ,
     'grid_header'=>
-    '<div class="fb-grid"><label for="[:id]">[:label]</label><table id="[:id]">'
+    '<div class="pure-control-group"><label for="[:id]">[:label]</label><table id="[:id]">'
     ,
     'grid_cell' =>
     '<td class="fb-grid-cell"><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] [:attributes]><td>'

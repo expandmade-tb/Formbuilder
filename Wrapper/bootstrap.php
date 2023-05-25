@@ -126,8 +126,7 @@ return [
         '<td><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]><td>'
         ,
         'grid_footer'=>
-        '      </table>
-            </div>
+        '   </table>
         </div>'
     ]
 ];
