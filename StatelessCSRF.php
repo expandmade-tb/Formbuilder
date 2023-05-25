@@ -53,7 +53,7 @@ class StatelessCSRF {
         $identifier = $this->urlSafeBase64Encode($identifier);
         $props      = [$identifier, $expiration, json_encode($data, JSON_THROW_ON_ERROR, 512), $random_seed];
 
-        return $this->urlSafeBase64Encode(hash_hmac(static::HASH_ALGO, implode('|', $props), $this->key, true));
+        return $this->urlSafeBase64Encode(hash_hmac(StatelessCSRF::HASH_ALGO, implode('|', $props), $this->key, true));
     }
 
     public function validate(string $identifier, string $provided_token, int $current_time = null): bool {

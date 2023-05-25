@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.7.0
+ * Version 2.8.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -31,11 +31,11 @@ class Field {
  */
 class Rule {
      public string $name;
-     public $function;   
+     public mixed $validate_function;
 
-     function __construct(string $name, callable $function) {
+     function __construct(string $name, callable $validate_function) {
         $this->name = $name;
-        $this->function = $function;
+        $this->validate_function = $validate_function;
     }
 }
 
@@ -60,11 +60,6 @@ class Formbuilder {
     public string $time_format = 'H:i';
     public string $date_placeholder = 'yyyy-mm-dd';
     public string $time_placeholder = 'hh:mm';
-
-    private function char_map(string $chr) : int {
-        $chr=strtolower($chr);
-        return ord($chr)-ord('a');
-     }
 
      private function map_char(int $int) : string {
         $int += ord('a');
@@ -95,18 +90,18 @@ class Formbuilder {
         $lang = 'en';
         extract($args, EXTR_IF_EXISTS); // overwrite predefined vars
 
-        $this->form_id = $form_id;
-        $this->form='<form name="'.$form_id.'" id="'.$form_id.'" action="'.$action.'" method="'.$method.'" '.$string.' >';
+        Wrapper::factory($wrapper);
+        $this->form_id = $form_id;   
+        $element = Wrapper::elements('form');
+        $this->form='<form name="'.$form_id.'" id="'.$form_id.'" action="'.$action.'" method="'.$method.'" class="'.$element.'" '.$string.' >';
 
         if ( !file_exists(__DIR__ . "/i18n/$lang.php") ) 
             $lang = 'en';
 
         $this->i18n = require(__DIR__ . "/i18n/$lang.php");
-
-        Wrapper::factory($wrapper);
     }
 
-    protected function add_field (string $name, string $element, bool $append=true) {
+    protected function add_field (string $name, string $element, bool $append=true) : void {
         if ( $append )
             $this->fields[] = new Field($name, $element);
         else
@@ -116,7 +111,7 @@ class Formbuilder {
                 array_unshift($this->fields, new Field($name, $element));
     }
 
-    protected function get_field (string $name) {
+    protected function get_field (string $name) : Field|false {
         foreach ($this->fields as $key => $field) {
             if ( $field->name == $name )
                 return $field;
@@ -125,7 +120,7 @@ class Formbuilder {
         return false;
     }
 
-    protected function add_rule (string $name, callable $rule) {
+    protected function add_rule (string $name, callable $rule) : void {
         $this->rules[] = new Rule($name, $rule);
     }
 
@@ -134,7 +129,7 @@ class Formbuilder {
 
         foreach ($this->rules as $key => $rule) {
             if ( $rule->name == $name )
-                $ruleset[] = $rule->function;
+                $ruleset[] = $rule->validate_function;
         }
 
         return $ruleset;
@@ -144,7 +139,7 @@ class Formbuilder {
         return $this->i18n[$key]??":$key:";
     }
 
-    protected function error_msg (string $name, string $msg) {
+    protected function error_msg (string $name, string $msg) : Formbuilder {
         if ( !isset($this->errors[$name]) )
             $this->errors[$name] = $msg;
 
@@ -181,7 +176,7 @@ class Formbuilder {
         return $element;
     }
 
-    protected function inline_js() {
+    protected function inline_js() : string {
         $id = array_key_first($this->errors);
         return "<script>const element = document.getElementById('$id'); element.scrollIntoView(); </script>";
     }
@@ -222,7 +217,7 @@ class Formbuilder {
         if ( substr($value, -1) !== '}' ) 
             return $value;
 
-        return $this->get_i18n(trim($value, '{}'), $value);
+        return $this->get_i18n(trim($value, '{}'));
     }
 
     /**
@@ -370,7 +365,7 @@ class Formbuilder {
      *
      * @return $this
      */
-    public function submit (string $name, string $value='', string $string='') {
+    public function submit (string $name='submit', string $value='', string $string='') {
         if ( empty($value) )
             $value = $this->beautify($name);
 
@@ -413,9 +408,9 @@ class Formbuilder {
      * @param string $type adds the buttons type: button | submit | reset
      * @param string $string additional attributes
      *
-     * @return void
+     * @return Formbuilder $this
      */
-    public function button (string $name, string $value='', string $onclick='', string $type='button', string $string='' ) {
+    public function button (string $name, string $value='', string $onclick='', string $type='button', string $string='' ) : Formbuilder {
         if ( empty($name) )
             $value=$this->beautify($name);
 
@@ -440,15 +435,15 @@ class Formbuilder {
     /**
      * create a button-bar
      *
-     * @param string $name the buttons name
-     * @param string $value the buttons value
-     * @param string $onclick adds either a js event / or a href to the button
-     * @param string $type adds the buttons type: button | submit | reset
-     * @param string $string additional attributes
+     * @param array $names the buttons name
+     * @param array $values the buttons value
+     * @param array $onclicks adds either a js event / or a href to the button
+     * @param array $types adds the buttons type: button | submit | reset
+     * @param array $strings additional attributes
      *
-     * @return void
+     * @return Formbuilder $this
      */
-    public function button_bar (array $names, array $values=[], array $onclicks=[], array $types=[], array $strings=[] ) {
+    public function button_bar (array $names, array $values=[], array $onclicks=[], array $types=[], array $strings=[] ) : Formbuilder {
         $element = Wrapper::element_parts('button_bar_header', '*button_bar_header');
         $this->add_field('*button_bar_header', $element);
 
@@ -492,11 +487,11 @@ class Formbuilder {
      *| value     | the input fields value 
      *| id        | the input fields id      
      *
-     * @param array $oninput adds a js input event (mostly thought to implement a live search)
+     * @param string $oninput adds a js input event (mostly thought to implement a live search)
      * 
      * @return $this
      */
-    public function search (string $name, array $args=[], $oninput='') {
+    public function search (string $name, array $args=[], string $oninput='') {
         $label = $this->beautify($name);
         $string = '';
         $value = '';
@@ -576,7 +571,9 @@ class Formbuilder {
         if ( $post != null )
             $value = $post;
 
-        if ( empty($string) )
+
+	    /* @phpstan-ignore-next-line (extract statement not recognized by phpstan */
+        if ( empty($string) ) 
             $string = "placeholder=\"$this->date_placeholder\"";
 
         $element = Wrapper::elements('text', $name, $this->lang($label), $id, $value, $string);
@@ -611,8 +608,9 @@ class Formbuilder {
         if ( $post != null )
             $value = $post;
 
-        if ( empty($string) )
-        $string = "placeholder=\"$this->time_placeholder\"";
+	    /* @phpstan-ignore-next-line (extract statement not recognized by phpstan */
+        if ( empty($string) ) 
+            $string = "placeholder=\"$this->time_placeholder\"";
 
         $element = Wrapper::elements('text', $name, $this->lang($label), $id, $value, $string);
         $this->add_field($name, $element);
@@ -652,7 +650,7 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
 
-        $element = Wrapper::elements('number', $name, $this->lang($label), $id, $value, $string,'','','',$min,$max,$step);
+        $element = Wrapper::elements('number', $name, $this->lang($label), $id, $value, $string,'','','',strval($min),strval($max),strval($step));
         $this->add_field($name, $element);
         return $this;
     }
@@ -798,12 +796,13 @@ class Formbuilder {
         $value = '';
 
         if ( $this->submitted() )
-            $value = $post === null ? '' : 'checked';
+            $value = $post == null ? '' : 'checked';
         else {
             if ( array_key_exists($name, $this->prePOST) )
-                $value = $post === null ? '' : 'checked';
+                $value = $post == null ? '' : 'checked';
             else
-                if ( $checked )
+                /* @phpstan-ignore-next-line (extract statement not recognized by phpstan */
+                if ( $checked == true ) 
                     $value = 'checked';
         }
 
@@ -837,24 +836,31 @@ class Formbuilder {
         $post = $this->post($name);
         $checked_val = '';
 
-        if ( empty($id) )
+	    /* @phpstan-ignore-next-line (extract statement not recognized by phpstan */
+        if ( empty($id) ) {
             $id = preg_replace('/[^a-zA-Z0-9]+/', '_', str_replace(['{','}'],'', strip_tags($label)));
+            
+            if ( is_null($id) )
+                $id = $label;
+        }
 
-        if ( empty($value) )
+	    /* @phpstan-ignore-next-line (extract statement not recognized by phpstan */
+        if ( empty($value) ) 
             $value = $id;
 
         if ( $this->submitted() )
-            $checked_val = $post != $value ? '' : 'checked';
+            $checked_val = $post != $value ? '' : 'checked=""';
         else {
             if ( array_key_exists($name, $this->prePOST) )
-                $checked_val = $post != $value ? '' : 'checked';
+                $checked_val = $post != $value ? '' : 'checked=""';
             else
-                if ( $checked )
-                    $checked_val = 'checked';
+                /* @phpstan-ignore-next-line (extract statement not recognized by phpstan */
+                if ( $checked == true ) 
+                    $checked_val = 'checked=""';
         }
 
         $element = Wrapper::elements('radio', $name, $this->lang($label), $id, $value, $checked_val.' '.$string);
-        $this->add_field($name, $element);
+        $this->add_field($id, $element);
         return $this;
     }
     
@@ -975,7 +981,7 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
 
-        $element = Wrapper::elements('textarea', $name, $this->lang($label), $id, $value, $string, '', $rows, $cols);
+        $element = Wrapper::elements('textarea', $name, $this->lang($label), $id, $value, $string, '', strval($rows), strval($cols));
         $this->add_field($name, $element);
         return $this;
     }
@@ -1059,13 +1065,13 @@ class Formbuilder {
     /**
      * adds a rule for later validation
      *
-     * @return $this
+     * @return Formbuilder $this
      */
-    public function rule ( $rule, $name='') {
+    public function rule ( string|callable $rule, string $name='') : Formbuilder {
         if ( empty($name) ) // if left empty we assume its the last added field (working on method chaining only ! )
             $name = end($this->fields)->name;
         else
-            if ( $this->warnings_on && $this->get_field($name) === false )
+            if ( $this->warnings_on === true && $this->get_field($name) === false )
                 trigger_error("field $name unknown", E_USER_WARNING );
 
         switch ($rule) {
@@ -1088,6 +1094,7 @@ class Formbuilder {
                 $this->add_rule($name, array($this,'val_email'));
                 break;
             default:
+                /* @phpstan-ignore-next-line (strings are covered else if not callable: caboom... */
                 $this->add_rule($name, $rule);
                 break;
         }
@@ -1145,7 +1152,7 @@ class Formbuilder {
      *
      * @param string $name fields name
      *
-     * @return string the posted value
+     * @return mixed the posted value
      */
     protected function post (string $name) {
         $post = null;
@@ -1231,10 +1238,10 @@ class Formbuilder {
 
             $value = $this->post($field);
 
-            if ( $value === null )
+            if ( is_null($value) === true )
                 $result[$field] = null;
             else
-                if ( is_array($value) )
+                if ( is_array($value) === true )
                     foreach ($value as $row_key => $row_value) 
                         foreach ($row_value as $col_key => $col_value)
                             $result[$field][$row_key][$col_key] = filter_var(strip_tags($col_value),FILTER_SANITIZE_SPECIAL_CHARS);
@@ -1266,7 +1273,7 @@ class Formbuilder {
      *
      * @return $this
      */
-    public function message (string $message, $string='') {
+    public function message (string $message, string $string='') {
         $element = Wrapper::elements('message', 'msg', '', '', $this->lang($message), $string);
         $this->add_field('alert_message', $element, false);
         return $this;
@@ -1326,7 +1333,8 @@ class Formbuilder {
                 $cell_id = $id . '-'.$this->map_char($c).$r;
                 $cell_value = $value[$r][$c]??'';
 
-                if ( is_array($string) )
+                /* @phpstan-ignore-next-line (extract is not recognized by phpstan  */
+                if ( is_array($string) ) 
                     $attributes = $string[$r][$c]??'';
                 else
                     $attributes = $string;

@@ -1,3 +1,8 @@
+v2.8.0
+- corrected wrappers
+- added wrapper for pure css
+- nessecary changes for phpstan level 8 check
+- fixed bugs
 v2.7.0
 - added input type timetext
 - format for date and time can be set
