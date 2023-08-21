@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.8.0
+ * Version 2.9.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -47,6 +47,7 @@ class Formbuilder {
     private string $uid    = 'A57538782F413F4428472B4B62506553';
     protected string $form = '';
     protected array $fields = [];
+    protected array $rows = [];
     protected array $errors = [];
     protected string $success = '';
     protected array $rules = [];
@@ -1021,21 +1022,23 @@ class Formbuilder {
      * opens a div 
      *
      * @param string $string additional attributes
+     * @param string $string name a uqniuqe name || * = unnamed
      *
      * @return $this
      */
-    public function div_open (string $string='') {
-        $this->add_field('*div_open', '<div '.$string.'>');
+    public function div_open (string $string='', string $name='*div_open') {
+        $this->add_field($name, '<div '.$string.'>');
         return $this;
     }
     
     /**
      * closes a div previsously openend with div_open
+     * @param string $name a uqniuqe name || * = unnamed
      *
      * @return $this
      */
-    public function div_close () {
-        $this->add_field('*div_close', '</div>');
+    public function div_close (string $name='*div_close') {
+        $this->add_field($name, '</div>');
         return $this;
     }
         
@@ -1044,21 +1047,23 @@ class Formbuilder {
      *
      * @param string $legend the legend to be shown
      * @param string $string additional attributes
+     * @param string $name uqniuqe name || * = unnamed
      *
      * @return $this
      */
-    public function fieldset_open (string $legend='', string $string='') {
-        $this->add_field('*fieldset_open', "<fieldset $string><legend>{$this->lang($legend)}</legend>");
+    public function fieldset_open (string $legend='', string $string='', string $name='*fieldset_open') {
+        $this->add_field($name, "<fieldset $string><legend>{$this->lang($legend)}</legend>");
         return $this;
     }
     
     /**
      * closes a previously opened fieldset
+     * @param string $name a uqniuqe name || * = unnamed
      *
      * @return $this
      */
-    public function fieldset_close () {
-        $this->add_field('*fieldset_close', "</fieldset>");
+    public function fieldset_close (string $name='*fieldset_close') {
+        $this->add_field($name, "</fieldset>");
         return $this;
     }
 
@@ -1283,11 +1288,12 @@ class Formbuilder {
      * adds html to the form
      *
      * @param string $value the html string
+     * @param string $name a uqniuqe name || * = unnamed
      *
      * @return $this
      */
-    public function html (string $value ) {
-        $this->add_field('*html', $value);
+    public function html (string $value, string $name='*html' ) {
+        $this->add_field($name, $value);
         return $this;
     }
     
@@ -1366,29 +1372,76 @@ class Formbuilder {
         if ( $this->check_timer )
             $result .= $this->timer().PHP_EOL;
 
-        foreach ($this->fields as $key => $field) {
+        if ( !empty($this->rows) ) { // use fields passed from layout_grid function 
+            $field_list = [];
 
-            if ( $this->warnings_on ) {
-                switch ($field->name) {
-                    case '*fieldset_open':
-                        $fieldset_mismatches++;
+            foreach ($this->fields as $key => $field) // similar to array_flip. not uniquely named fields will be lost !
+                if ( substr($field->name, 0 ,1) != '*'  ) // fields w/o names wont be processed
+                    $field_list[$field->name] = $field;
+            
+            // process all fields passed from the layout_grid function
+            foreach ($this->rows as $row => $columns) {
+                if ( is_array($columns) )
+                    $col_fields = $columns;
+                else
+                    $col_fields = array_map('trim',explode(',', $columns));
+
+                $result .=  Wrapper::elements('ROW_OPEN'); 
+
+                foreach ($col_fields as $column) {
+                    $field = $field_list[$column];
+                    unset($field_list[$column]);
+
+                    if (  $this->warnings_on && $field === false ) {
+                        trigger_error("unkown field '$column' in function layout_grid specified");
                         break;
-                    case '*fieldset_close':
-                        $fieldset_mismatches--;
-                        break;
-                    case '*div_open':
-                        $div_mismatches++;
-                        break;
-                    case '*div_close':
-                        $div_mismatches--;
-                        break;
+                    }
+                        
+                    $result .=  Wrapper::elements('COL_OPEN'); 
+                    $result .= $field->element.PHP_EOL;
+
+                    if ( isset($this->errors[$field->name]) ) 
+                        $result .= Wrapper::elements('alert', $field->name, '', '', $this->errors[$field->name]); 
+
+                        $result .=  Wrapper::elements('COL_CLOSE'); 
+                    }
+
+                    $result .=  Wrapper::elements('ROW_CLOSE'); 
                 }
+
+            // now process all remaining fields if there are any
+            foreach ($field_list as $field_name => $field) {
+                $result .= $field->element.PHP_EOL;
+
+                if ( isset($this->errors[$field->name]) ) 
+                    $result .= Wrapper::elements('alert', $field->name, '', '', $this->errors[$field->name]); 
             }
+        }
+        else { // process all created fields
+            foreach ($this->fields as $key => $field) {
 
-            $result .= $field->element.PHP_EOL;
+                if ( $this->warnings_on ) {
+                    switch ($field->name) {
+                        case '*fieldset_open':
+                            $fieldset_mismatches++;
+                            break;
+                        case '*fieldset_close':
+                            $fieldset_mismatches--;
+                            break;
+                        case '*div_open':
+                            $div_mismatches++;
+                            break;
+                        case '*div_close':
+                            $div_mismatches--;
+                            break;
+                    }
+                }
 
-            if ( isset($this->errors[$field->name]) ) 
-                $result .= Wrapper::elements('alert', $field->name, '', '', $this->errors[$field->name]); 
+                $result .= $field->element.PHP_EOL;
+
+                if ( isset($this->errors[$field->name]) ) 
+                    $result .= Wrapper::elements('alert', $field->name, '', '', $this->errors[$field->name]); 
+            }
         }
 
         $result .= '</form>'.PHP_EOL;
@@ -1461,5 +1514,9 @@ class Formbuilder {
         }
             
         return $result;
+    }
+
+    public function layout_grid(array $rows) : void {
+        $this->rows = $rows;
     }
 }

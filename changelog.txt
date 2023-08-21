@@ -1,3 +1,6 @@
+v2.9.0
+- form grid layout added
+- bootstrap inline forms added
 v2.8.0
 - corrected wrappers
 - added wrapper for pure css

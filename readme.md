@@ -473,6 +473,30 @@ Checks if the passed value contains {} and treats the $value as a keyword to loo
 
 ___
 
+```PHP
+public function layout_grid(array $rows) : void 
+```
+
+Sets the layout for a form grid in order to layout the form into rows and columns. 
+
+*example:*
+
+```PHP
+        $form = new Formbuilder('demoform', ['wrapper'=>'bootstrap-inline']);
+        $form->text('name')->rule('required');
+        $form->text('email')->rule('email');
+        $form->search('search', ['label'=>'Live Search'],"livesearchResults(this, '/livesearch/Album', '$ajax_token')");
+        $form->text('phone');
+        $form->password('password');
+        $form->date('date', ['value'=>date("Y-m-d")]);
+        $form->datetime('date_time');
+        $form->datetext('datetext');
+        $form->timetext('timetext');
+        $form->textarea('message');
+        $form->layout_grid(['name,email','phone,password','date,date_time,datetext,timetext','select_from,choose_from']);
+```
+___
+
 ## message
 
 ```PHP

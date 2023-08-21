@@ -135,7 +135,11 @@ return [
                 <li class="dropdown-item">?</li>
             </ul>
         </div>
-    </div>'
+    </div>',
+    'ROW_OPEN' => '<div class="row">',
+    'ROW_CLOSE' => '</div>',
+    'COL_OPEN' => '<div class="col">',
+    'COL_CLOSE' => '</div>'
     ],
     'element_parts' => //--- multiple elements
     [

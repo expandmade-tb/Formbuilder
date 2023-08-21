@@ -12,34 +12,34 @@ return [
     'elements'=> //--- single elements
     [
     'text' =>
-    '<div class="mb-3">
-        <label for="[:name]" class="form-label">[:label]</label>
-        <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+    '<div class="form-floating mb-3">
+        <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>
+        <label for="[:name]" >[:label]</label>
     </div>',
     'number' =>
-    '<div class="mb-3">
-        <label for="[:name]" class="form-label">[:label]</label>
-        <input type="number" name="[:name]" id="[:id]" value="[:value]" min="[:min]" max="[:max]" step="[:step]" [:class-ovwr] class="form-control" [:attributes]>
+    '<div class="form-floating mb-3">
+        <input type="number" name="[:name]" id="[:id]" value="[:value]" min="[:min]" max="[:max]" step="[:step]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>
+        <label for="[:name]" >[:label]</label>
     </div>',
     'password' =>
-    '<div class="mb-3">
-        <label for="[:name]" class="form-label">[:label]</label>
-        <input type="password" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+    '<div class="form-floating mb-3">
+        <input type="password" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>
+        <label for="[:name]" >[:label]</label>
     </div>',
     'date' => 
-    '<div class="mb-3">
-        <label for="[:name]" class="form-label">[:label]</label>
-        <input type="date" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+    '<div class="form-floating mb-3">
+        <input type="date" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>
+        <label for="[:name]" >[:label]</label>
     </div>',
     'datetime' => 
-    '<div class="mb-3">
-        <label for="[:name]" class="form-label">[:label]</label>
-        <input type="datetime-local" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+    '<div class="form-floating mb-3">
+        <input type="datetime-local" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>
+        <label for="[:name]" >[:label]</label>
     </div>',
     'textarea' =>
-    '<div class="mb-3">
-        <label for="[:name]" class="form-label">[:label]</label>
-        <textarea name="[:name]" id="[:id]" rows="[:row]" cols="[:col]" [:class-ovwr] class="form-control" [:attributes]>[:value]</textarea>
+    '<div class="form-floating mb-3">
+        <textarea name="[:name]" id="[:id]" rows="[:row]" cols="[:col]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>[:value]</textarea>
+        <label for="[:name]" >[:label]</label>
     </div>',
     'submit' =>
     '<div class="mb-3">
@@ -64,19 +64,19 @@ return [
         </div>
     </div>',
     'select' =>
-    '<div class="mb-3">
-        <label for="[:name]" class="form-label">[:label]</label>
-        <select [:class-ovwr] class="form-select" name="[:name]" id="[:id]" [:attributes]>
+    '<div class="form-floating mb-3">
+        <select [:class-ovwr] class="form-select" name="[:name]" id="[:id]" placeholder="[:name]" [:attributes]>
             [:value]
         </select>
+        <label for="[:name]" >[:label]</label>
     </div>',
     'datalist' =>
-        '<div class="mb-3">
-        <label for="[:name]" class="form-label">[:label]</label>
-        <input [:class-ovwr] class="form-control" name="[:name]" list="list_[:id]" id="[:id]" value="[:value]" [:attributes]>
+        '<div class="form-floating mb-3">
+        <input [:class-ovwr] class="form-control" name="[:name]" list="list_[:id]" id="[:id]" value="[:value]" placeholder="[:name]" [:attributes]>
         <datalist id="list_[:id]">
             [:options]
         </datalist>
+        <label for="[:name]" >[:label]</label>
     </div>',
     'alert' =>
     '<div class="mb-3">
@@ -89,8 +89,8 @@ return [
     </div>',
     'file' =>
     '<div class="mb-3">
-        <label for="[:name]" class="form-label">[:label]</label>
-        <input type="file" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+        <label for="[:name]" >[:label]</label>
+        <input type="file" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>
     </div>',
     'hidden' =>
         '<input type="hidden" name="[:name]" id="[:id]" value="[:value]" [:attributes]>',
@@ -123,7 +123,7 @@ return [
         ,
         'grid_header'=>
         '<div class="mb-3">
-            <label for="[:name]" class="form-label">[:label]</label>
+            <label for="[:name]" >[:label]</label>
             <table id="[:id]">'
         ,
         'grid_cell' =>
