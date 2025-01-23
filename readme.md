@@ -495,7 +495,86 @@ Sets the layout for a form grid in order to layout the form into rows and column
         $form->textarea('message');
         $form->layout_grid(['name,email','phone,password','date,date_time,datetext,timetext','select_from,choose_from']);
 ```
+------
+
+## livesearch
+
+```PHP
+public function livesearch (string $name, string $table, array $args=[])
+```
+
+Creates an input field of type live search. The following arguments in ***arg*** are valid:
+
+| arg    | description                    |
+| :----- | :----------------------------- |
+| label  | label text for the input field |
+| string | additional field attributes    |
+| value  | the input fields value         |
+| id     | the input fields id            |
+
+*example:*
+
+```PHP
+    $form->livesearch('Item', 'Items')->map(['Price'=>'Price'])->rule('required');
+```
+
+> **While other functions work out of the box, some  more things have to be done:**
+
+- [ ] <u>Make sure the javascript *livesearch.js* is available:</u>
+
+```php
+	$this->data['js_files'][] = JAVASCRIPT."/livesearch.js";
+```
+
+- [ ] <u>A controller named *clientRequests.php* need to have 2 functions implemented, their naming convention is [tablename]Search and [tablename]Find:</u>
+
+```php
+public function ItemsSearch(string $input) : void {
+	$table = new DBTable('Items');
+	$results = $table->where('Item',$input.'%', 'like')->limit(10)->findColumn('Item');
+    echo json_encode($results);
+}
+
+public function ItemsFind() : void {
+	$search_value = $_GET['search_value']??'';
+    
+    if (empty($search_value) )
+		return;
+	
+    $table = new DBTable('Items');
+    $result = $table->where('Item', $input)->findFirst();
+    echo json_encode($result);
+} 
+```
+
+- [ ] <u>In case you are using tokens make sure they are available in the scripts:</u>
+
+```php
+$form->set_secrets(helper::env('app_secret', 'empty_secret'),helper::env('app_identifier','empty_identifier'));
+```
+
+- [ ] <u>Make sure your router alllows ajax calls to clientRequests.php:</u>
+
+```php
+'clientRequests' => ['GET|POST|clientRequests', 'ItemsSearch,ItemsFind']
+```
 ___
+
+## map
+
+```PHP
+public function map(array $mapping, string $name='') : Formbuilder
+```
+
+maps requested ajax data to form data and updates the form values
+
+*example:*
+
+```PHP
+$form->livesearch('Item', 'Items')->map(['Price'=>'Price'])->rule('required');
+```
+
+------
 
 ## message
 
@@ -708,6 +787,8 @@ public function search (string $name, array $args=[], $oninput='')
 ```
 
 Creates an input field type search - with the oninput event a live search can be implemented. An example javascript is given in livesearch.js, you have to add your controller.
+
+**This function is deprecated, instead livesearch should be used.**
 
 *example:*
 

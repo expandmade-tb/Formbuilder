@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.9.0
+ * Version 2.11.0
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -14,7 +14,7 @@ use Formbuilder\Wrapper\Wrapper;
 Use Formbuilder\StatelessCSRF;
 
 /**
- * Field Supporting Class for Formbuilder
+ * Field supporting class for Formbuilder
  */
 class Field {
     public string $name;
@@ -27,7 +27,7 @@ class Field {
 }
 
 /**
- * Rules Supporting Class for Formbuilder
+ * Rules supporting class for Formbuilder
  */
 class Rule {
      public string $name;
@@ -36,6 +36,18 @@ class Rule {
      function __construct(string $name, callable $validate_function) {
         $this->name = $name;
         $this->validate_function = $validate_function;
+    }
+}
+
+/**
+ * livesearch map supporting class for Formbuilder
+ */
+Class Mappings {
+    public string $table;
+    public array $mapping;
+
+    function __construct(string $table) {
+        $this->table = $table;;
     }
 }
 
@@ -54,6 +66,7 @@ class Formbuilder {
     protected array $prePOST = [];
     protected string $form_id = '';
     protected array $i18n = [];
+    protected array $mappings = [];
     public int $check_timer = 0;
     public bool $use_session = false;
     public bool $warnings_on = false;
@@ -81,9 +94,11 @@ class Formbuilder {
      *| wrapper   | 'bootstrap'  | which wrapper to use      
      *| lang      | 'en'         | sets the language         
      *
+     * @param string $request_controller which controller to use for ajax requests
+     *
      * @return void
      */
-    function __construct(string $form_id, array $args=[]) {
+    function __construct(string $form_id, array $args=[], string $request_controller='clientRequests') {
         $action = '';
         $string = '';
         $method = 'post';
@@ -94,6 +109,12 @@ class Formbuilder {
         Wrapper::factory($wrapper);
         $this->form_id = $form_id;   
         $element = Wrapper::elements('form');
+
+        if ( empty($string) )
+            $string = "data-controller=\"$request_controller\"";
+        else
+            $string .= " data-controller=\"$request_controller\"";
+        
         $this->form='<form name="'.$form_id.'" id="'.$form_id.'" action="'.$action.'" method="'.$method.'" class="'.$element.'" '.$string.' >';
 
         if ( !file_exists(__DIR__ . "/i18n/$lang.php") ) 
@@ -102,6 +123,13 @@ class Formbuilder {
         $this->i18n = require(__DIR__ . "/i18n/$lang.php");
     }
 
+    private function create_token(int $lifetime=10) : string {
+        $csrf_generator = new StatelessCSRF($this->secret);
+        $csrf_generator->setGlueData('ip', $_SERVER['REMOTE_ADDR']);
+        $csrf_generator->setGlueData('user-agent', $_SERVER['HTTP_USER_AGENT']);            
+        return $csrf_generator->getToken($this->uid, time() + $lifetime);           
+    }
+   
     protected function add_field (string $name, string $element, bool $append=true) : void {
         if ( $append )
             $this->fields[] = new Field($name, $element);
@@ -148,15 +176,10 @@ class Formbuilder {
     }
 
     protected function csrf () : string {
-        if ( $this->use_session ) {
+        if ( $this->use_session )
             $token = bin2hex(random_bytes(16));
-        }
-        else {
-            $csrf_generator = new StatelessCSRF($this->secret);
-            $csrf_generator->setGlueData('ip', $_SERVER['REMOTE_ADDR']);
-            $csrf_generator->setGlueData('user-agent', $_SERVER['HTTP_USER_AGENT']);            
-            $token = $csrf_generator->getToken($this->uid, time() + 900); // valid for 15 mins.           
-        }
+        else 
+            $token = $this->create_token(900);         
         
         $element = '<input type="hidden" name="_token" id="csrf-token" value="'.$token.'" />';
 
@@ -277,6 +300,21 @@ class Formbuilder {
     public function val_empty ( $value, string $field ) : string {
         if ( empty($value) ) 
             return $this->get_i18n('val_empty');
+
+        return  '';
+    }
+        
+    /**
+     * built in standard validation rule for a single field
+     *
+     * @param mixed $value checks if field is checked (applies to checkboxes)
+     * @param string $field the name of the field to be checked
+     *
+     * @return string empty | error message
+     */
+    public function val_checked ( $value, string $field ) : string {
+        if ( is_null($value) ) 
+            return $this->get_i18n('val_checked');
 
         return  '';
     }
@@ -510,6 +548,43 @@ class Formbuilder {
         else
             $replacement = 'oninput="'.$oninput.';"';
 
+        $final_element = str_replace('oninput=""', $replacement, $element);
+        $this->add_field($name, $final_element);
+        return $this;
+    }
+
+    /**
+     * creates an input field type live search
+     *
+     * @param string $name the input field name
+     * @param string $table the name of the database table to lookup
+     * @param array $args one or more of the following arguments:
+     * 
+     *| arg       | description 
+     *|:----------|:-----------------------------------------------
+     *| label     | label text for the input field 
+     *| string    | additional field attributes
+     *| value     | the input fields value 
+     *| id        | the input fields id      
+     *
+     * @param string $oninput adds a js input event (mostly thought to implement a live search)
+     * 
+     * @return $this
+     */
+    public function livesearch (string $name, string $table, array $args=[]) {
+        $label = $this->beautify($name);
+        $string = '';
+        $value = '';
+        $id = $name;
+        extract($args, EXTR_IF_EXISTS);
+        $post = $this->post($name);
+
+        if ( $post != null) 
+            $value = $post;
+
+        $this->mappings[$name] = new Mappings(($table));
+        $element = Wrapper::elements('search', $name, $this->lang($label), $id, $value, $string);
+        $replacement = " oninput=\"addDropdownItems(this)\" data-source=\"{$table}\"";
         $final_element = str_replace('oninput=""', $replacement, $element);
         $this->add_field($name, $final_element);
         return $this;
@@ -797,10 +872,10 @@ class Formbuilder {
         $value = '';
 
         if ( $this->submitted() )
-            $value = $post == null ? '' : 'checked';
+            $value = is_null($post) ? '' : 'checked';
         else {
             if ( array_key_exists($name, $this->prePOST) )
-                $value = $post == null ? '' : 'checked';
+                $value = is_null($post) ? '' : 'checked';
             else
                 /* @phpstan-ignore-next-line (extract statement not recognized by phpstan */
                 if ( $checked == true ) 
@@ -1097,6 +1172,9 @@ class Formbuilder {
                 break;
             case 'email':
                 $this->add_rule($name, array($this,'val_email'));
+                break;
+            case 'checked':
+                $this->add_rule($name, array($this,'val_checked'));
                 break;
             default:
                 /* @phpstan-ignore-next-line (strings are covered else if not callable: caboom... */
@@ -1445,6 +1523,18 @@ class Formbuilder {
         }
 
         $result .= '</form>'.PHP_EOL;
+
+        // generate inline script to map data to the form fields
+        foreach ($this->mappings as $fieldname => $map) {
+            if ( isset($map->mapping) ) {
+                $result .= '<script type="text/javascript"> function updateItemsData(jdata) { data = JSON.parse(jdata); ';
+
+                foreach ($map->mapping as $datafield => $formfield)
+                    $result .=  "document.getElementById('$datafield').value = data['$formfield'];";
+
+                $result .= '}</script>';
+            }
+        }
        
         if ( !empty($this->errors) )
             $result .= $this->inline_js();
@@ -1516,7 +1606,31 @@ class Formbuilder {
         return $result;
     }
 
+        
+    /**
+     * define in which order the fields should be rendered
+     *
+     * @param array $rows each row value is a comma separated list of field names
+     * @return void
+     */
     public function layout_grid(array $rows) : void {
         $this->rows = $rows;
+    }
+
+    /**
+     * maps reuested ajax data to form data and updates the form values
+     *
+     * @param array $rows each row value is a comma separated list of field names
+     * @return void
+     */
+    public function map(array $mapping, string $name='') : Formbuilder {
+        if ( empty($name) ) // if left empty we assume its the last added field (working on method chaining only ! )
+            $name = end($this->fields)->name;
+        else
+            if ( $this->warnings_on === true && $this->get_field($name) === false )
+                trigger_error("field $name unknown", E_USER_WARNING );
+
+        $this->mappings[$name]->mapping = $mapping;
+        return $this;
     }
 }

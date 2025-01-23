@@ -26,6 +26,14 @@ return [
         <input type="password" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>
         <label for="[:name]" >[:label]</label>
     </div>',
+    'search' =>
+    '<div class="form-floating mb-3">
+        <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes] placeholder="[:name]" oninput="">
+        <label for="[:name]" >[:label]</label>
+        <ul class="dropdown-menu" id="[:id]-results" style="display:none">
+            <li class="dropdown-item">?</li>
+        </ul>
+    </div>',
     'date' => 
     '<div class="form-floating mb-3">
         <input type="date" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>
