@@ -1,0 +1,11 @@
+{
+    "files.exclude": {
+        "**/.DS_Store": false,
+        "**/.git": false,
+        "**/.hg": false,
+        "**/.svn": false,
+        "**/CVS": false,
+        "wp-content/uploads": true
+    },
+    "fossil.enableRenaming": false
+}

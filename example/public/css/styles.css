@@ -1,0 +1,118 @@
+input.form-control[readonly], select.form-select[readonly], textarea.form-control[readonly], input.form-check-input[readonly]
+{
+    background-color:rgb(213, 173, 86);
+}
+input.form-control, select.form-select, textarea.form-control, input.form-check-input
+{
+    background-color:rgb(242, 243, 209);
+}
+input[readonly].title {
+    background-color: rgb(157, 110, 10);
+    font-weight: bold;
+    color: white;
+}
+.hidecontainer
+{
+    display:none;
+}
+#page {
+    background-image: linear-gradient(to right, rgb(227, 232, 169), #f4ebd0);
+}
+
+a.list-group-item {
+    background-color: rgb(242, 243, 209);
+}
+
+a.list-group-item:hover {
+    background-color: rgb(213, 173, 86);
+}
+
+.dbc-table {
+    background-color: rgb(213, 173, 86); 
+}
+
+.dbc-headerbar {
+    background-color: rgb(213, 173, 86); 
+}
+
+.dbc-table thead {
+    background-color: rgb(157, 110, 10);
+}
+
+.dbv-table {
+    background-color: lightyellow; 
+}
+
+.dbv-headerbar {
+    background-color: lightyellow; 
+}
+
+.dbv-table thead {
+    background-color: lightyellow;
+}
+
+.grid-table {
+    background-color: lightyellow; 
+}
+
+.grid-table thead {
+    background-color: lightyellow;
+}
+
+fieldset.border {
+    border: 1px groove rgb(0, 0, 0) !important;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+legend.border {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    text-align: left !important;
+}
+
+a.page-link {
+    background-color: rgb(213, 173, 86); 
+    color:rgb(0, 0, 0);
+}
+
+.page-item.active .page-link {
+    background-color: rgb(157, 110, 10) !important; 
+}
+
+.dropdown .dropdown-menu {
+  display: none;
+}
+
+.dropdown:hover > .dropdown-menu,
+.dropend:hover > .dropdown-menu {
+  display: block;
+  margin-top: 0.125em;
+  margin-left: 0.125em;
+}
+
+@media screen and (min-width: 769px) {
+  .dropend:hover > .dropdown-menu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+  }
+  .dropend .dropdown-toggle {
+    margin-left: 0.5em;
+  }
+}
+
+.notification-message {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    padding-left: 1%;
+    padding-top: 5px;
+    background-color: black;
+    color: lightgray;
+    height: 40px;
+    border: 2px solid red;
+}

@@ -1,11 +1,16 @@
 <?php
 
+/**
+ * Creates a stateless CSRF
+ * Version 2.00
+ * Author: expandmade / TB
+ * Author URI: https://expandmade.com
+ */
+
 namespace Formbuilder;
 
 class StatelessCSRF {
-
     private const HASH_ALGO = 'sha256';
-
     private string $key;
     private array $data = [];
 
@@ -28,7 +33,7 @@ class StatelessCSRF {
         $this->data = [];
     }
 
-    public function getToken(string $identifier, int $expiration = null): string {
+    public function getToken(string $identifier, ?int $expiration = null): string {
         $seed = $this->getRandomSeed();
         $hash = $this->generateHash($identifier, $seed, $expiration, $this->data);
         return $this->urlSafeBase64Encode($seed . '|' . $expiration . '|' . $hash);
@@ -44,28 +49,31 @@ class StatelessCSRF {
         return rtrim($encoded, '=');
     }
 
-    private function generateHash(string $identifier, string $random_seed, int $expiration = null, array $data = []) : string {
-        if (null === $expiration) {
+    private function generateHash(string $identifier, string $random_seed, ?int $expiration = null, array $data = []) : string {
+        if (is_null($expiration) ) {
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */
             $expiration = '';
         }
 
         $identifier = $this->urlSafeBase64Encode($identifier);
         $props      = [$identifier, $expiration, json_encode($data, JSON_THROW_ON_ERROR, 512), $random_seed];
-
         return $this->urlSafeBase64Encode(hash_hmac(StatelessCSRF::HASH_ALGO, implode('|', $props), $this->key, true));
     }
 
-    public function validate(string $identifier, string $provided_token, int $current_time = null): bool {
+    public function validate(string $identifier, string $provided_token, ?int $current_time = null): bool {
         $provided_token = $this->urlSafeBase64Decode($provided_token);
-        if (!$provided_token) {
+        
+        if (!$provided_token)
             return false;
-        }
 
         $parts = explode('|', $provided_token, 3);
+
         if (count($parts) !== 3) {
             return false;
         }
+
+        if ( is_null($current_time) )
+            $current_time = time();
 
         if ($parts[1] === '') {
             $expiration = null;

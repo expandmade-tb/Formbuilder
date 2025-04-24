@@ -1,0 +1,1 @@
+To start the demo, double click the **startDemo** script or open a terminal and enter **./startDemo**. The script will start the php buildin server on port 8080 and then start firefox / chromium. Other browsers you will have to change the script.

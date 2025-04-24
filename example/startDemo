@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# create symlink to Formbuilder lib
+
+if [ -d "../Formbuilder" ]; then
+    ln -sr ../Formbuilder ./app/lib/Formbuilder
+else
+    echo "Formbuilder directory does not exist"
+fi
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PUBLIC_HTML="$SCRIPT_DIR/public"
+cd "$PUBLIC_HTML"
+php -S localhost:8000 &
+PHP_SERVER_PID=$!
+firefox http://localhost:8000
+
+if [ $? -ne 0 ]; then
+    chromium http://localhost:8000
+fi
+
+kill -3 $PHP_SERVER_PID

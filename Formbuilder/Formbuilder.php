@@ -4,7 +4,7 @@ namespace Formbuilder;
 
 /**
  * Forms for Model View Controllers
- * Version 2.11.0
+ * Version 2.12.2
  * Author: expandmade / TB
  * Author URI: https://expandmade.com
  */
@@ -18,11 +18,13 @@ Use Formbuilder\StatelessCSRF;
  */
 class Field {
     public string $name;
+    public string $label;
     public string $element;
 
-    function __construct(string $name, string $element) {
+    function __construct(string $name, string $element, string $label='') {
         $this->name = $name;
         $this->element = $element;
+        $this->label = $label;
     }
 }
 
@@ -110,6 +112,7 @@ class Formbuilder {
         $this->form_id = $form_id;   
         $element = Wrapper::elements('form');
 
+	    /* @phpstan-ignore-next-line (extract statement not recognized by phpstan */
         if ( empty($string) )
             $string = "data-controller=\"$request_controller\"";
         else
@@ -130,14 +133,14 @@ class Formbuilder {
         return $csrf_generator->getToken($this->uid, time() + $lifetime);           
     }
    
-    protected function add_field (string $name, string $element, bool $append=true) : void {
+    protected function add_field (string $name, string $element, string $label='', bool $append=true) : void {
         if ( $append )
-            $this->fields[] = new Field($name, $element);
+            $this->fields[] = new Field($name, $element, $label);
         else
             if ( empty($this->fields) )
-                $this->fields[] = new Field($name, $element);
+                $this->fields[] = new Field($name, $element, $label);
             else
-                array_unshift($this->fields, new Field($name, $element));
+                array_unshift($this->fields, new Field($name, $element,));
     }
 
     protected function get_field (string $name) : Field|false {
@@ -217,7 +220,12 @@ class Formbuilder {
      * @return $this
      */
     public function add_lang (string $filename) {
+        try {
         $add_lang = require($filename);
+        } catch (\Throwable $th) {
+            return $this;
+        }
+
         $this->i18n = array_merge($this->i18n, $add_lang);
         return $this;
     }
@@ -519,12 +527,13 @@ class Formbuilder {
      * @param string $name the input field name
      * @param array $args one or more of the following arguments:
      * 
-     *| arg       | description 
-     *|:----------|:-----------------------------------------------
-     *| label     | label text for the input field 
-     *| string    | additional field attributes
-     *| value     | the input fields value 
-     *| id        | the input fields id      
+     *| arg         | description 
+     *|:------------|:-----------------------------------------------
+     *| label       | label text for the input field 
+     *| placeholder | the input fields id      
+     *| string      | additional field attributes
+     *| value       | the input fields value 
+     *| id          | the input fields id      
      *
      * @param string $oninput adds a js input event (mostly thought to implement a live search)
      * 
@@ -532,6 +541,7 @@ class Formbuilder {
      */
     public function search (string $name, array $args=[], string $oninput='') {
         $label = $this->beautify($name);
+        $placeholder = '';
         $string = '';
         $value = '';
         $id = $name;
@@ -541,6 +551,9 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
 
+        if ( !empty($placeholder) )
+            $string = $string . ' placeholder="'.$this->lang($placeholder).'"';
+
         $element = Wrapper::elements('search', $name, $this->lang($label), $id, $value, $string);
 
         if ( empty($oninput) )
@@ -549,7 +562,7 @@ class Formbuilder {
             $replacement = 'oninput="'.$oninput.';"';
 
         $final_element = str_replace('oninput=""', $replacement, $element);
-        $this->add_field($name, $final_element);
+        $this->add_field($name, $final_element, $label);
         return $this;
     }
 
@@ -560,19 +573,19 @@ class Formbuilder {
      * @param string $table the name of the database table to lookup
      * @param array $args one or more of the following arguments:
      * 
-     *| arg       | description 
-     *|:----------|:-----------------------------------------------
-     *| label     | label text for the input field 
-     *| string    | additional field attributes
-     *| value     | the input fields value 
-     *| id        | the input fields id      
+     *| arg         | description 
+     *|:------------|:-----------------------------------------------
+     *| label       | label text for the input field 
+     *| placeholder | the input fields id      
+     *| string      | additional field attributes
+     *| value       | the input fields value 
+     *| id          | the input fields id      
      *
-     * @param string $oninput adds a js input event (mostly thought to implement a live search)
-     * 
      * @return $this
      */
     public function livesearch (string $name, string $table, array $args=[]) {
         $label = $this->beautify($name);
+        $placeholder = '';
         $string = '';
         $value = '';
         $id = $name;
@@ -582,11 +595,14 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
 
+        if ( !empty($placeholder) )
+            $string = $string . ' placeholder="'.$this->lang($placeholder).'"';
+
         $this->mappings[$name] = new Mappings(($table));
         $element = Wrapper::elements('search', $name, $this->lang($label), $id, $value, $string);
         $replacement = " oninput=\"addDropdownItems(this)\" data-source=\"{$table}\"";
         $final_element = str_replace('oninput=""', $replacement, $element);
-        $this->add_field($name, $final_element);
+        $this->add_field($name, $final_element, $label);
         return $this;
     }
 
@@ -596,17 +612,19 @@ class Formbuilder {
      * @param string $name the input field name
      * @param array $args one or more of the following arguments:
      * 
-     *| arg       | description 
-     *|:----------|:-----------------------------------------------
-     *| label     | label text for the input field 
-     *| string    | additional field attributes
-     *| value     | the input fields value 
-     *| id        | the input fields id      
+     *| arg         | description 
+     *|:------------|:-----------------------------------------------
+     *| label       | label text for the input field 
+     *| placeholder | the input fields id      
+     *| string      | additional field attributes
+     *| value       | the input fields value 
+     *| id          | the input fields id      
      * 
      * @return $this
      */
     public function text (string $name, array $args=[] ) {
         $label = $this->beautify($name);
+        $placeholder = '';
         $string = '';
         $value = '';
         $id = $name;
@@ -616,8 +634,11 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
 
+        if ( !empty($placeholder) )
+            $string = $string . ' placeholder="'.$this->lang($placeholder).'"';
+
         $element = Wrapper::elements('text', $name, $this->lang($label), $id, $value, $string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
 
@@ -653,7 +674,7 @@ class Formbuilder {
             $string = "placeholder=\"$this->date_placeholder\"";
 
         $element = Wrapper::elements('text', $name, $this->lang($label), $id, $value, $string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         $this->rule('date', $name);
         return $this;
     }
@@ -689,7 +710,7 @@ class Formbuilder {
             $string = "placeholder=\"$this->time_placeholder\"";
 
         $element = Wrapper::elements('text', $name, $this->lang($label), $id, $value, $string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         $this->rule('time', $name);
         return $this;
     }
@@ -727,7 +748,7 @@ class Formbuilder {
             $value = $post;
 
         $element = Wrapper::elements('number', $name, $this->lang($label), $id, $value, $string,'','','',strval($min),strval($max),strval($step));
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
 
@@ -757,7 +778,7 @@ class Formbuilder {
             $value = $post;
 
         $element = Wrapper::elements('password', $name, $this->lang($label), $id, $value, $string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
 
@@ -781,7 +802,7 @@ class Formbuilder {
         $id = $name;
         extract($args, EXTR_IF_EXISTS);
         $element = Wrapper::elements('hidden', $name, '', $id, $value, $string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
     
@@ -812,7 +833,7 @@ class Formbuilder {
             $value = $post;
 
         $element = Wrapper::elements('date', $name, $this->lang($label), $id, $value, $string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
           
@@ -843,7 +864,7 @@ class Formbuilder {
             $value = $post;
 
         $element = Wrapper::elements('datetime', $name, $this->lang($label), $id, $value, $string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
           
@@ -883,7 +904,7 @@ class Formbuilder {
         }
 
         $element = Wrapper::elements('checkbox', $name, $this->lang($label), $id, $value, $value.' '.$string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
 
@@ -936,7 +957,7 @@ class Formbuilder {
         }
 
         $element = Wrapper::elements('radio', $name, $this->lang($label), $id, $value, $checked_val.' '.$string);
-        $this->add_field($id, $element);
+        $this->add_field($id, $element, $label);
         return $this;
     }
     
@@ -967,10 +988,14 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
             
-        if ( is_array($valuelist) )
-            $arr_value = $valuelist;
+        if ( is_array($valuelist) ) {
+            $arr_value = [];
+
+            foreach ($valuelist as $key => $value)
+                $arr_value[] = $this->lang($value);
+        }
         else
-            $arr_value = explode(',', $valuelist);
+            $arr_value = explode(',', $this->lang($valuelist));
 
         $opt = '';
 
@@ -981,7 +1006,7 @@ class Formbuilder {
                 $opt .= '<option value="'.$option.'">'.$option.'</option>';
 
         $element = Wrapper::elements('select', $name, $this->lang($label), $id, $opt, $string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
 
@@ -1012,18 +1037,22 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
             
-        if ( is_array($valuelist) )
-            $arr_value = $valuelist;
-        else
-            $arr_value = explode(',', $valuelist);
+        if ( is_array($valuelist) ) {
+            $arr_value = [];
 
+            foreach ($valuelist as $key => $value)
+                $arr_value[] = $this->lang($value);
+        }
+        else
+            $arr_value = explode(',', $this->lang($valuelist));
+    
         $opt = '';
 
         foreach ($arr_value as $key => $option) 
             $opt .= '<option value="'.$option.'">';
 
         $element = Wrapper::elements('datalist', $name, $this->lang($label), $id, $value, $string, $opt);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
     
@@ -1033,14 +1062,15 @@ class Formbuilder {
      * @param string $name the input field name
      * @param array $args one or more of the following arguments:
      * 
-     *| arg       | description 
-     *|:----------|:-----------------------------------------------
-     *| label     | label text for the input field 
-     *| string    | additional field attributes
-     *| value     | the input fields value 
-     *| id        | the input fields id      
-     *| rows      | size / amount of rows       
-     *| cols      | size / amount of cols      
+     *| arg         | description 
+     *|:------------|:-----------------------------------------------
+     *| label       | label text for the input field 
+     *| placeholder | the input fields id      
+     *| string      | additional field attributes
+     *| value       | the input fields value 
+     *| id          | the input fields id      
+     *| rows        | size / amount of rows       
+     *| cols        | size / amount of cols      
      *
      * @return $this
      */
@@ -1048,6 +1078,7 @@ class Formbuilder {
         $label = $this->beautify($name);
         $rows=2;
         $cols=40;
+        $placeholder = '';
         $string='';
         $value='';
         $id = $name;
@@ -1057,8 +1088,11 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
 
+        if ( !empty($placeholder) )
+            $string = $string . ' placeholder="'.$this->lang($placeholder).'"';
+
         $element = Wrapper::elements('textarea', $name, $this->lang($label), $id, $value, $string, '', strval($rows), strval($cols));
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
         
@@ -1068,17 +1102,19 @@ class Formbuilder {
      * @param string $name the input field name
      * @param array $args one or more of the following arguments:
      * 
-     *| arg       | description 
-     *|:----------|:-----------------------------------------------
-     *| label     | label text for the input field 
-     *| string    | additional field attributes
-     *| value     | the input fields value 
-     *| id        | the input fields id      
+     *| arg         | description 
+     *|:------------|:-----------------------------------------------
+     *| label       | label text for the input field 
+     *| placeholder | the input fields id      
+     *| string      | additional field attributes
+     *| value       | the input fields value 
+     *| id          | the input fields id      
      * 
      * @return $this
      */
     public function file (string $name, array $args=[] ) {
         $label = $this->beautify($name);
+        $placeholder = '';
         $string='';
         $value='';
         $id = $name;
@@ -1088,8 +1124,11 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
 
+        if ( !empty($placeholder) )
+            $string = $string . ' placeholder="'.$this->lang($placeholder).'"';
+
         $element = Wrapper::elements('file', $name, $this->lang($label), $id, $value, $string);
-        $this->add_field($name, $element);
+        $this->add_field($name, $element, $label);
         return $this;
     }
     
@@ -1262,7 +1301,7 @@ class Formbuilder {
      *
      * @return mixed returns an array of the fields and their values | false if csrf token or timer are 'invalid'
      */
-    public function validate ($field_list)  {
+    public function validate (string | array $field_list)  {
                
         if ( $this->use_session ) {
             if ( ( $_POST['_token']??'' != $_SESSION['csrf-token'] )) {
@@ -1327,6 +1366,7 @@ class Formbuilder {
                 if ( is_array($value) === true )
                     foreach ($value as $row_key => $row_value) 
                         foreach ($row_value as $col_key => $col_value)
+                            /* @phpstan-ignore-next-line (offsetAccess.nonOffsetAccessible)  */
                             $result[$field][$row_key][$col_key] = filter_var(strip_tags($col_value),FILTER_SANITIZE_SPECIAL_CHARS);
                 else
                     $result[$field] = filter_var(strip_tags($value),FILTER_SANITIZE_SPECIAL_CHARS);
@@ -1358,7 +1398,7 @@ class Formbuilder {
      */
     public function message (string $message, string $string='') {
         $element = Wrapper::elements('message', 'msg', '', '', $this->lang($message), $string);
-        $this->add_field('alert_message', $element, false);
+        $this->add_field('alert_message', $element, '', false);
         return $this;
     }
     
@@ -1407,7 +1447,7 @@ class Formbuilder {
         if ( $post != null) 
             $value = $post;
 
-        $html = Wrapper::element_parts('grid_header', $name, $label, $id).PHP_EOL;
+        $html = Wrapper::element_parts('grid_header', $name, $this->lang($label), $id).PHP_EOL;
 
         for ($r=0; $r < $rows; $r++) { 
             $html .= '<tr>';
@@ -1606,6 +1646,25 @@ class Formbuilder {
         return $result;
     }
 
+    public function render_mail(array $data) : string {
+        $mailtxt = '';
+        $field_list = [];
+
+        foreach ($this->fields as $key => $field) // similar to array_flip. not uniquely named fields will be lost !
+            if ( substr($field->name, 0 ,1) != '*'  ) // fields w/o names wont be processed
+                $field_list[$field->name] = $field;
+
+        foreach ($field_list as $field_name => $field) {
+            $label = $this->lang($field->label??'');
+            $value = $data[$field_name]??'';
+
+            if ( !empty($label) && !empty($value) ) {
+                $mailtxt .= "<p><b>$label:</b><br>$value";
+            }
+        }
+
+        return $mailtxt;
+    }
         
     /**
      * define in which order the fields should be rendered
@@ -1620,8 +1679,9 @@ class Formbuilder {
     /**
      * maps reuested ajax data to form data and updates the form values
      *
-     * @param array $rows each row value is a comma separated list of field names
-     * @return void
+     * @param array $mapping field to field mapping
+     * @param  string $name name of the field to map
+     * @return Formbuilder
      */
     public function map(array $mapping, string $name='') : Formbuilder {
         if ( empty($name) ) // if left empty we assume its the last added field (working on method chaining only ! )

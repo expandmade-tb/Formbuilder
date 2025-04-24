@@ -1,0 +1,106 @@
+input[readonly],
+select[readonly],
+textarea[readonly]
+{
+    background-color:rgb(213, 173, 86);
+}
+
+input,
+select,
+textarea
+{
+    background-color:rgb(242, 243, 209) !important;
+}
+
+input[readonly].title {
+    background-color: rgb(157, 110, 10);
+    font-weight: bold;
+    color: white;
+}
+
+.hidecontainer
+{
+    display:none;
+}
+
+#page {
+    background-image: linear-gradient(to right, rgb(227, 232, 169), #f4ebd0);
+}
+
+a.list-group-item {
+    background-color: rgb(242, 243, 209);
+}
+
+a.list-group-item:hover {
+    background-color: rgb(213, 173, 86);
+}
+
+.dbc-table {
+    background-color: rgb(213, 173, 86); 
+}
+
+.dbc-headerbar {
+    background-color: rgb(213, 173, 86); 
+}
+
+.dbc-table thead {
+    background-color: rgb(157, 110, 10);
+}
+
+fieldset.border {
+    border: 1px groove rgb(0, 0, 0) !important;
+    padding: 0 1.4em 1.4em 1.4em !important;
+    margin: 0 0 1.5em 0 !important;
+    -webkit-box-shadow:  0px 0px 0px 0px #000;
+            box-shadow:  0px 0px 0px 0px #000;
+}
+
+legend.border {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    text-align: left !important;
+}
+
+a.page-link {
+    background-color: rgb(213, 173, 86); 
+    color:rgb(0, 0, 0);
+}
+
+.page-item.active .page-link {
+    background-color: rgb(157, 110, 10) !important; 
+}
+
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info,
+.btn-secondary,
+.btn-success,
+.btn-danger,
+.btn-warning,
+.btn-info {
+    color: white;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+    background: rgb(92, 99, 106) !important;
+}
+
+.btn-success {
+    background: rgb(21, 115, 71) !important;
+}
+
+.btn-danger {
+    background: rgb(187, 45, 59) !important;
+}
+
+.btn-warning {
+    background: rgb(255, 202, 44) !important;
+}
+
+.btn-info {
+    background: rgb(49, 210, 242) !important;
+}

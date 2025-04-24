@@ -164,8 +164,7 @@ return [
         '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>'
     ,
     'button_bar_footer' =>
-    '   </div>
-    </div>'
+    '   </div>'
     ,
     'grid_header'=>
     '<div class="form-group row">
