@@ -2,18 +2,20 @@
 
 namespace Formbuilder;
 
+use Formbuilder\Wrapper\Wrapper;
+
 class Button {
     private string $class;
     private string $href;
     private string $icon;
     private string $onclick;
 
-    function __construct() {
-        $this->defaults();
+    function __construct(string $classes='bootstrap') {
+        $this->defaults($classes);
     }
 
-    public function defaults() : Button {
-        $this->class='btn btn-primary';
+    public function defaults(string $classes='bootstrap') : Button {
+        $this->class = Wrapper::classes('button', $classes);
         $this->href='#';
         $this->icon='';
         $this->onclick='';

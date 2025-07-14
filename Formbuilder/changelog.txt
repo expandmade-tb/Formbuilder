@@ -1,0 +1,60 @@
+v2.9.0
+- form grid layout added
+- bootstrap inline forms added
+v2.8.0
+- corrected wrappers
+- added wrapper for pure css
+- nessecary changes for phpstan level 8 check
+- fixed bugs
+v2.7.0
+- added input type timetext
+- format for date and time can be set
+- placeholder for date and time can be set
+- fixed validation of a date according to the date format
+- added validation of a time according to the time format 
+v2.6.0
+- added input type datetext 
+v2.5.2
+- add wrapper raw
+- correction in grid function when values / strings are not not set
+- class overwrites outputs attributes twice in some cases
+v2.5.0
+- added function render_array
+v2.4.2
+- comments revised
+- added additional warnings
+v2.4.1
+- language 'en' was always used in constructor 
+v2.4
+- parameter valuelist in functions select and datalist is now mixed
+- additional parameter 'field' is passed to validation callback functions
+- a new type of input field 'search' has been added to cater with live search
+- a javascript 'livesearch.js' added 
+- the statelessCSRF class is not automacially loaded anymore
+
+v2.3.1
+- added warning if validated fields are not equal to declared fields
+- checkbox and radio wer not working correctly with set_prePOST function
+- default id creation in radio has to be stripped from html tags
+
+v2.3.0
+- added input type grid
+
+v2.2.0
+- added input type number
+
+v2.1.2
+- automatic id creation in radio function did not filter {}
+- build in validation functions do not require a value anymore
+
+v2.1.1
+- missing translation for message
+- missing label in bootstrap wrapper for input select
+
+v2.1 
+- another language file can be added
+- error message can be translated
+- submit and submit_bar values can be translated
+
+v2.0
+- the first release

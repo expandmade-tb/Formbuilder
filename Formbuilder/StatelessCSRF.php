@@ -1,10 +1,9 @@
 <?php
 
 /**
- * Creates a stateless CSRF
- * Version 2.00
+ * Stateless CSRF Protection Class
+ * Version 2.1 - Secure & Improved
  * Author: expandmade / TB
- * Author URI: https://expandmade.com
  */
 
 namespace Formbuilder;
@@ -19,11 +18,7 @@ class StatelessCSRF {
     }
 
     /**
-     * Set data that can be used to identify a user. IP address and User-Agent string
-     * are ideal candidates.
-     *
-     * @param  string  $key
-     * @param  string  $value
+     * Set user-specific data to bind the CSRF token to context (e.g., IP, User-Agent).
      */
     public function setGlueData(string $key, string $value): void {
         $this->data[$key] = $value;
@@ -33,68 +28,79 @@ class StatelessCSRF {
         $this->data = [];
     }
 
+    /**
+     * Generate a stateless CSRF token.
+     */
     public function getToken(string $identifier, ?int $expiration = null): string {
         $seed = $this->getRandomSeed();
         $hash = $this->generateHash($identifier, $seed, $expiration, $this->data);
-        return $this->urlSafeBase64Encode($seed . '|' . $expiration . '|' . $hash);
+
+        $token = implode('|', [$seed, (string)($expiration ?? ''), $hash]);
+        return $this->urlSafeBase64Encode($token);
     }
 
-    private function getRandomSeed(): string {
-        /** @noinspection PhpUnhandledExceptionInspection */
-        return $this->urlSafeBase64Encode(random_bytes(8));
-    }
+    /**
+     * Validate a provided CSRF token.
+     */
+    public function validate(string $identifier, string $provided_token, ?int $current_time = null): bool {
+        $decoded = $this->urlSafeBase64Decode($provided_token);
 
-    private function urlSafeBase64Encode(string $input): string {
-        $encoded = strtr(base64_encode($input), '+/', '-_');
-        return rtrim($encoded, '=');
-    }
-
-    private function generateHash(string $identifier, string $random_seed, ?int $expiration = null, array $data = []) : string {
-        if (is_null($expiration) ) {
-            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
-            $expiration = '';
+        if (!$decoded) {
+            return false;
         }
 
-        $identifier = $this->urlSafeBase64Encode($identifier);
-        $props      = [$identifier, $expiration, json_encode($data, JSON_THROW_ON_ERROR, 512), $random_seed];
-        return $this->urlSafeBase64Encode(hash_hmac(StatelessCSRF::HASH_ALGO, implode('|', $props), $this->key, true));
-    }
-
-    public function validate(string $identifier, string $provided_token, ?int $current_time = null): bool {
-        $provided_token = $this->urlSafeBase64Decode($provided_token);
-        
-        if (!$provided_token)
-            return false;
-
-        $parts = explode('|', $provided_token, 3);
+        $parts = explode('|', $decoded, 3);
 
         if (count($parts) !== 3) {
             return false;
         }
 
-        if ( is_null($current_time) )
-            $current_time = time();
+        [$seed, $expirationRaw, $provided_hash] = $parts;
 
-        if ($parts[1] === '') {
+        if ($expirationRaw === '') {
             $expiration = null;
-        } elseif (!is_numeric($parts[1]) || $current_time > $parts[1]) {
+        } elseif (!ctype_digit($expirationRaw)) {
             return false;
         } else {
-            $expiration = (int)$parts[1];
+            $expiration = (int)$expirationRaw;
+            $current_time ??= time();
+            if ($current_time > $expiration) {
+                return false;
+            }
         }
 
-        $hash = $this->generateHash($identifier, $parts[0], $expiration, $this->data);
-        return hash_equals($hash, $parts[2]);
+        $expected_hash = $this->generateHash($identifier, $seed, $expiration, $this->data);
+        return hash_equals($expected_hash, $provided_hash);
     }
 
-    private function urlSafeBase64Decode(string $input): string {
-        return base64_decode(strtr($input, '-_', '+/'));
+    private function generateHash(string $identifier, string $random_seed, ?int $expiration = null, array $data = []): string {
+        $encodedIdentifier = $this->urlSafeBase64Encode($identifier);
+        $payload = implode('|', [
+            $encodedIdentifier,
+            (string)($expiration ?? ''),
+            json_encode($data, JSON_THROW_ON_ERROR),
+            $random_seed
+        ]);
+
+        return $this->urlSafeBase64Encode(hash_hmac(self::HASH_ALGO, $payload, $this->key, true));
+    }
+
+    private function getRandomSeed(): string {
+        return $this->urlSafeBase64Encode(random_bytes(16)); // 128-bit
+    }
+
+    private function urlSafeBase64Encode(string $input): string {
+        return rtrim(strtr(base64_encode($input), '+/', '-_'), '=');
+    }
+
+    private function urlSafeBase64Decode(string $input): string|false {
+        $padded = str_pad($input, strlen($input) % 4 === 0 ? strlen($input) : strlen($input) + 4 - strlen($input) % 4, '=');
+        return base64_decode(strtr($padded, '-_', '+/'), true);
     }
 
     public function __debugInfo(): array {
         return [
-          'data' => $this->data,
+            'data' => $this->data,
         ];
     }
-
 }

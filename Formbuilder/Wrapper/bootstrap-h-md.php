@@ -130,7 +130,12 @@ return [
     '<div class="form-group row">
         <label for="[:name]" class="col-md-2 col-form-label">[:label]</label>
         <div class="col-md-8">
-            <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes] oninput="">
+            <div class="input-group">
+                <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                </div>            
+            </div>
             <ul class="dropdown-menu" id="[:id]-results" style="display:none">
                 <li class="dropdown-item">?</li>
             </ul>
@@ -156,15 +161,15 @@ return [
     </div>'
     ,
     'button_bar_header' =>
-    '<div class="form-group row">
-        <label class="col-md-2 col-form-label"></label>
+    '<div class="form-group" style="margin-right: calc(-.5 * var(--bs-gutter-x)); margin-top: 1rem;">
         <div class="col-md-8">'
     ,
     'button_bar_element' =>
         '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>'
     ,
     'button_bar_footer' =>
-    '   </div>'
+    '    </div>
+    </div>'
     ,
     'grid_header'=>
     '<div class="form-group row">

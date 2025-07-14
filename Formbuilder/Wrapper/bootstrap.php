@@ -42,13 +42,9 @@ return [
         <textarea name="[:name]" id="[:id]" rows="[:row]" cols="[:col]" [:class-ovwr] class="form-control" [:attributes]>[:value]</textarea>
     </div>',
     'submit' =>
-    '<div class="mb-3">
-        <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>
-    </div>',
+        '<input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>',
     'button' =>
-    '<div class="mb-3">
-        <button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>
-    </div>',
+        '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>',
     'checkbox' =>
     '<div class="mb-3">
         <div class="form-check form-check-inline">
@@ -90,10 +86,23 @@ return [
     'file' =>
     '<div class="mb-3">
         <label for="[:name]" class="form-label">[:label]</label>
-        <input type="file" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+        <div class="input-group">
+            <input type="file" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+            <div class="input-group-prepend">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+            </div>            
+        </div>
     </div>',
     'hidden' =>
         '<input type="hidden" name="[:name]" id="[:id]" value="[:value]" [:attributes]>',
+    'search' =>
+    '<div class="mb-3">
+        <label for="[:name]" class="form-label">[:label]</label>
+            <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]>
+            <ul class="dropdown-menu" id="[:id]-results" style="display:none">
+                <li class="dropdown-item">?</li>
+            </ul>
+    </div>',
     'ROW_OPEN' => '<div class="row">',
     'ROW_CLOSE' => '</div>',
     'COL_OPEN' => '<div class="col">',

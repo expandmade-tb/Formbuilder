@@ -14,7 +14,7 @@ return [
     'text' =>
     '<div class="form-floating mb-3">
         <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" placeholder="[:name]" [:attributes]>
-        <label for="[:name]" >[:label]</label>
+        <label for="[:name]">[:label]</label>
     </div>',
     'number' =>
     '<div class="form-floating mb-3">
@@ -28,8 +28,8 @@ return [
     </div>',
     'search' =>
     '<div class="form-floating mb-3">
-        <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes] placeholder="[:name]" oninput="">
-        <label for="[:name]" >[:label]</label>
+        <input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes] placeholder="[:name]">
+        <label for="[:name]"><i class="bi bi-search">&nbsp;</i>[:label]</label>
         <ul class="dropdown-menu" id="[:id]-results" style="display:none">
             <li class="dropdown-item">?</li>
         </ul>
@@ -79,7 +79,7 @@ return [
         <label for="[:name]" >[:label]</label>
     </div>',
     'datalist' =>
-        '<div class="form-floating mb-3">
+    '<div class="form-floating mb-3">
         <input [:class-ovwr] class="form-control" name="[:name]" list="list_[:id]" id="[:id]" value="[:value]" placeholder="[:name]" [:attributes]>
         <datalist id="list_[:id]">
             [:options]
@@ -90,6 +90,7 @@ return [
     '<div class="mb-3">
         <div class="text-danger mb-3">
             [:value]
+        </div>
     </div>',
     'message' =>
     '<div [:class-ovwr] class="alert alert-danger" role="alert [:attributes]">
@@ -109,36 +110,26 @@ return [
     ],
     'element_parts' => //--- multiple elements
     [
-        'submit_bar_header' =>
-        '<div class="mb-3">'
-        ,
-        'submit_bar_element' =>
-        '       <input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>'
-        ,
-        'submit_bar_footer' =>
-        '   </div>
-        </div>'
-        ,
-        'button_bar_header' =>
-        '<div class="mb-3">'
-        ,
-        'button_bar_element' =>
-            '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>'
-        ,
-        'button_bar_footer' =>
-        '   </div>'
-        ,
-        'grid_header'=>
+    'submit_bar_header' =>
+        '<div class="mb-3">',
+    'submit_bar_element' =>
+        '<input type="submit" name="[:name]" value="[:value]" id="[:id]" [:class-ovwr] class="btn btn-primary" [:attributes]/>',
+    'submit_bar_footer' =>
+        '</div>',
+    'button_bar_header' =>
+        '<div class="">',
+    'button_bar_element' =>
+        '<button name="[:name]" id="[:id]" type="button" [:class-ovwr] class="btn btn-primary">[:value]</button>',
+    'button_bar_footer' =>
+        '</div>',
+    'grid_header'=>
         '<div class="mb-3">
             <label for="[:name]" >[:label]</label>
-            <table id="[:id]">'
-        ,
-        'grid_cell' =>
-        '<td><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]><td>'
-        ,
-        'grid_footer'=>
-        '   </table>
-        </div>'
+            <table id="[:id]">',
+    'grid_cell' =>
+        '<td><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] class="form-control" [:attributes]><td>',
+    'grid_footer'=>
+        '</table></div>'
     ]
 ];
  

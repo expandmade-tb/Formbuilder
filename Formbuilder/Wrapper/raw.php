@@ -44,7 +44,7 @@ return [
     'hidden' =>
         '<input type="hidden" name="[:name]" id="[:id]" value="[:value]" [:attributes]>',
     'search' =>
-        '<label for="[:id]">[:label]</label><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] [:attributes] oninput="">
+        '<label for="[:id]">[:label]</label><input type="text" name="[:name]" id="[:id]" value="[:value]" [:class-ovwr] [:attributes]>
          <ul class="dropdown-menu" id="[:id]-results" style="display:none">
              <li class="dropdown-item">?</li>
          </ul>'
